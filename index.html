@@ -31,6 +31,7 @@
             min-height: 80vh;
             z-index: 2;
             position: relative;
+            padding: 20px 20px 100px 20px;
            }
            .gradient{
             color: transparent;
@@ -124,7 +125,7 @@
             font-weight: 500;
             transition: all .2s ease-in-out;
             cursor: pointer;
-            width: 50%;
+            width: 70%;
             margin-bottom: 20px;
             margin-top: 1px;
             backdrop-filter: blur(4px);
@@ -138,8 +139,8 @@
            .uploadicon{
             background-image: url('./images/image.png');
             background-size: cover;
-            width: 32px;
-            height: 32px;
+            width: 40px;
+            height: 40px;
             color: #ef5da8;
             transition: transform .2s ease;
            }
@@ -263,9 +264,11 @@
             padding: 10px;
            }
            .button1{
-            bottom: 50px;
-            height: 70px;
-            width: 200px;
+            
+            width: 100px;
+            height: 50px;
+            margin-bottom: 0;
+            position: absolute;
             font-family: "Open Sans", sans-serif;
             font-size: 20px;
             letter-spacing: 2px;
@@ -276,7 +279,7 @@
             z-index: 10;
             padding: 0.25em 0.5em;
             box-shadow: 1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px, 4px 4px 0px 0px, 5px 5px 0px 0px;
-            position: relative;
+            
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
@@ -318,12 +321,48 @@
             justify-content: center;
             align-items: center;
            }
-           @media screen and (max-width: 400px){
-            .limit{
-                display: flex;
-            }
+           .txt2{
+            display: inline-block; transform: rotate(90deg); font-size: 50px;
+           }
+           .txt1{
+            display: inline-block; font-size: 50px;
            }
            
+           @media (max-width: 500px){
+            
+            .button1{
+                width: 100px;
+                height: 50px;
+                
+               font-size: 15px;
+               margin-bottom: 0px;
+            }
+            .doodlesep{
+                left: 280px;
+                top: 90px;
+                rotate: 180deg;
+                width: 50px;
+                height: 30px;
+            }
+            .doodleup{
+                top: 35px;
+                left: -30px;
+                height: 80px;
+                width: 75px;
+            }
+            .txt1{
+                display: none;
+            }
+            .txt2{
+                display: none;
+            }
+
+           }
+           @media (max-width: 350px){
+            .limit{
+                display:flex;
+            }
+           }
 
 
         </style>
@@ -339,13 +378,13 @@
             <div class="status" id = "status"> Pick a audio file</div>
             <div class="intsec"></div>
             <div class="uploadwrap" id="uploadwra">
-                <div class="doodle doodleup"><br><br><br><br><span style="display: inline-block; font-size: 50px;">1.</span></div>
+                <div class="doodle doodleup"><br><br><br><br><span class="txt1">1.</span></div>
               <input type="file" id="audioinput" class="hiddinpu" accept=".mp3, .wav, .m4a, .flac">
               <label for="audioinput" class="uploadbtn" id="filedis"><span class="uploadicon"></span><span>Select a audio file</span></label>
             </div>
             <div class="or">OR</div>
             <div class = "actionwrap">
-                <div class="doodle doodlesep"><br><br><br><span style="display: inline-block; transform: rotate(90deg); font-size: 50px;">2.</span></div>
+                <div class="doodle doodlesep"><br><br><br><span class="txt2">2.</span></div>
                 <select id="dropdown" class="dropdown">
                     <option value="" disabled selected>Select a track(demo)</option>
                     <option value="demo1">I ain't worried By One Republic</option>
@@ -354,9 +393,10 @@
                 <button id="uploadbtn" class="actionbtn">LETS GO!</button>
                 <p class="noice">Use Spatial Audio Compatible Devices for the Best Experience<br>(Although any headphones can be used)</p>
                 <button id="playbtn" class="actionbtn" style="display: none;">Enter Dolby atmos ripoff</button>
-                <button class="button1" style="position:fixed; left: 50px;" id="github">Github</button>
-                <button class="button1" style="position:fixed; right: 50px;" id="twitter">About</button>
+                
             </div>
+            <button class="button1" style="position:absolute; left: 50px; bottom: 30px;" id="github">Github</button>
+                <button class="button1" style="position:absolute; right: 50px; bottom: 30px;" id="about">About</button>
         </div>
     </div>
         <script src="index.js"></script>
