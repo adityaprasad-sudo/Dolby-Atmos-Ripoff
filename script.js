@@ -155,12 +155,11 @@ function mix(){
    scene.add(hemi)
    const pinkypromise = []
    const stems = [
-    { name: 'vocals', color: 0xffffff, path: './music/vocals.mp3', move: 'behind'},
-    { name: 'drums', color: 0xff0000, path: './music/drums.mp3' , move: 'atom'},
-    { name: 'bass', color: 0x00ff00, path: './music/bass.mp3' , move: 'clap'},
-    { name: 'other', color: 0x0000ff, path: './music/other.mp3', move: 'infinity'},
-    {name: 'guitar', color: 0xff00ff, path: './music/guitar.mp3', move: 'tele'},
-    {name: 'paino', color: 0xffff00, path: './music/piano.mp3' , move: 'hoverfront'},
+    { name: 'vocals', color: 0xffffff, path: './music/rightvocal.mp3', angle: 0, speed: 0.015, move: 'behind' },
+      { name: 'guitar', color: 0x6aff9d, path: './music/rightguitar.mp3', angle: Math.PI * 2 / 5,speed: 0.02, move: 'tele' },
+      { name: 'piano', color: 0x5ce1ff, path: './music/piano.wav', angle: Math.PI * 4 / 5, speed: 0.01,move: 'clap' },
+      { name: 'drums', color: 0xff2f92, path: './music/rightdrum.mp3', angle: Math.PI * 6 / 5 , speed: 0.01,    move: 'atom'},
+      { name: 'other', color: 0xffe45c, path: './music/other.wav', angle: Math.PI * 8 / 5 , speed: 0.008,    move: 'infinity'},
    ]
    const soundcheck ={}
    window.mixer.gains = {}
@@ -277,7 +276,7 @@ function animate() {
                         case 'infinity':
                             orb.position.x = Math.sin(ud.angle) * ud.radius
                             orb.position.z = Math.sin(ud.angle) * Math.cos(ud.angle) * ud.radius
-                            orb.position.y = Math.sin(ud.angle*1.5)*1.5 
+                            orb.position.y = Math.sin(ud.angle*1.5)*1.5
                             break;
                         case 'overhead':
                             orb.position.x = Math.cos(ud.angle) * (ud.radius*1.2)
@@ -309,7 +308,7 @@ function animate() {
                         }
                         case 'tele':{
                           const snap = Math.sign(Math.sin(ud.angle *2))
-                        orb.position.x = snap *5
+                        orb.position.x = snap*5
                             orb.position.z=0
                          orb.position.y = 1
                             break;}   
@@ -337,21 +336,99 @@ function animate() {
                 const avg = active > 0 ? (timothy/active)/256 : 0
                 const dynamic = 0.05 + (avg * 0.2)
                 for(let i = 0; i < position.count; i++){
-                    const orig = original[i]
-                    const noise = Math.sin(orig.x * 1.2 +t) * Math.cos(orig.y * 1.2 +t) * Math.sin(orig.z * 1.2 +t) * dynamic
-                    position.setXYZ(i, orig.x + (orig.x * noise), orig.y + (orig.y * noise), orig.z + (orig.z * noise))
+                 const orig = original[i]
+                   const noise = Math.sin(orig.x * 1.2 +t) * Math.cos(orig.y * 1.2 +t) * Math.sin(orig.z * 1.2 +t) * dynamic
+                  position.setXYZ(i, orig.x + (orig.x * noise), orig.y + (orig.y * noise), orig.z + (orig.z * noise))
                 }
                 position.needsUpdate = true
                 auramesh.geometry.computeVertexNormals()
                 blobgrp.scale.setScalar(1+(avg*0.8))
-                auramesh.material.emissiveIntensity = 0.5 + (avg * 4)
-
-
-                scene.traverse(darken);
-                shinecomposer.render();
+                auramesh.material.emissiveIntensity=0.5+(avg*4)
+                scene.traverse(darken)
+                shinecomposer.render()
                 scene.traverse(undark);
-                composer.render();
+                composer.render()
             }
             animate();
 }
-mix()
+const upbtn = document.getElementById('uploadbtn')
+const playbtn = document.getElementById('playbtn')
+const stat = document.getElementById('status')
+const fileinpu = document.getElementById('audioinput')
+const namefi = document.getElementById('filedis')
+const dropdown = document.getElementById('dropdown')
+const fileinpuid = document.getElementById('filedis')
+upbtn.disabled = true
+upbtn.style.opacity ="0.3"
+upbtn.style.cursor = "not-allowed"
+fileinpu.addEventListener('change', (e)     =>{
+    if(e.target.files.length > 0 ){
+        const file = e.target.files[0].name
+        const text = namefi.querySelectorAll('span')[1]
+        text.innerText = file
+        upbtn.disabled = false
+        upbtn.style.opacity ="1"
+        upbtn.style.cursor = "pointer"
+        stat.innerHTML = 'Select a track'
+        dropdown.style.opacity = "0.3"
+        dropdown.disabled = true
+        dropdown.style.cursor = "not-allowed"
+    }
+})
+dropdown.addEventListener('change', () => {
+    if(dropdown.value !== '0'){
+        fileinpu.disabled = true
+        fileinpuid.style.opacity ="0.3"
+        fileinpuid.disabled = true
+        fileinpuid.style.cursor = "not-allowed"
+        upbtn.disabled = false
+        upbtn.style.opacity ="1"
+        upbtn.style.cursor = "pointer"
+        stat.innerHTML = 'Select a track'
+    }else{
+        fileinpu.disabled = false
+        fileinpuid.style.opacity ="1"
+        fileinpuid.disabled = false
+        fileinpuid.style.cursor = "pointer"
+    }
+})
+upbtn.addEventListener('click', () => {
+
+    if(fileinpu.files.length === 0 && dropdown.value === '0'){
+        stat.innerHTML = 'Select a track'
+    }else{
+        stat.innerHTML = 'Loading'
+        upbtn.disabled = true
+        upbtn.style.opacity ="0.3"
+        upbtn.style.cursor = "not-allowed"
+        fileinpu.disabled = true
+        fileinpuid.disabled = true
+        setTimeout(() => {
+            stat.innerText = "stems ready"
+            upbtn.style.display = "none"
+            playbtn.style.display = "inline-flex"
+            fileinpu.disabled = true
+            fileinpuid.disabled = true
+            dropdown.disabled = true
+            dropdown.style.cursor = "not-allowed"
+            dropdown.style.opacity = "0.3"
+        }, 2000);
+
+    }
+})
+playbtn.addEventListener('click', (e) =>{
+    e.target.innerText = 'Loading'
+    e.target.disabled = true
+    const mainel = document.querySelector('.main')
+    const bgel = document.querySelector('.bg')
+    mainel.style.transition = "opacity 1s ease-in-out"
+    bgel.style.transition = "opacity 1s ease-in-out"
+    mainel.style.opacity = "0"
+    bgel.style.opacity = "0"
+    setTimeout(() => {
+        mainel.style.display = "none"
+        bgel.style.display = "none"
+        mix()
+    }, 1000);
+
+})
