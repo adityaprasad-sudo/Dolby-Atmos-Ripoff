@@ -65,6 +65,21 @@
             margin-bottom: 0px;
             color: #d1d1e0;
             max-width: 600px;
+            background: linear-gradient(to right,#555 20% , #ffffff 30%, #555 50% );
+            background-size: 200% 100%;
+            background-position: 100% 0;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 4s infinite linear;
+           }
+           @keyframes shine{
+            0%{
+                background-position: 100% 0;
+            }
+            100%{
+                background-position: -50% 0;
+            }
            }
            .intsec{
             position: relative;
@@ -168,6 +183,7 @@
             background-repeat: no-repeat;
             top: 20px;
             left: 4%;
+            z-index: 1;
             color: #c9b8f2;
             filter: drop-shadow(0 0 8px rgba(201, 184, 242, 0.35));
             animation: float 4s ease-in-out infinite;
@@ -179,14 +195,15 @@
             height: 100px;
             width: 150px;
             background-repeat: no-repeat;
-            top: 90px;
-            left: 30px;
+            top: 200px;
+            left: 160px;
             color: #c9b8f2;
             filter: drop-shadow(0 0 8px rgba(201, 184, 242, 0.35));
             animation: updown 4s ease-in-out infinite;
            }
            .dropdown{
             width: 100%;
+            z-index: 9;
             background-color: rgba(28, 18, 48, 0.6);
             padding: 16px 24px;
             border: 2px solid rgba(255, 255, 255, 0.1);
@@ -199,11 +216,13 @@
             margin-bottom: 20px;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            
            }
            .dropdown:hover{
             border-color: #ef5da8;
             background: rgba(38,23,63,0.8);
             transform: translateY(-2px);
+            
            }
            .dropdown option{
             background: #1c1230;
@@ -283,14 +302,34 @@
             opacity: 0.08;
             pointer-events: none;
            }
-           
-           
+           .or{
+            color: #d1d1e0;
+            margin-bottom: 13px;
+           }
+           .limit{
+            background: #030207;
+            z-index: 99999;
+            display: none;
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            font-size: 50px;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+           }
+           @media screen and (max-width: 400px){
+            .limit{
+                display: flex;
+            }
+           }
            
 
 
         </style>
     </head>
     <body>
+        <div class="limit">This Experience is not supported on this device</div>
         <div class="bgimg"></div>
         <div class="bg"></div>
         <div id="cancont"></div>
@@ -304,14 +343,16 @@
               <input type="file" id="audioinput" class="hiddinpu" accept=".mp3, .wav, .m4a, .flac">
               <label for="audioinput" class="uploadbtn" id="filedis"><span class="uploadicon"></span><span>Select a audio file</span></label>
             </div>
+            <div class="or">OR</div>
             <div class = "actionwrap">
                 <div class="doodle doodlesep"><br><br><br><span style="display: inline-block; transform: rotate(90deg); font-size: 50px;">2.</span></div>
                 <select id="dropdown" class="dropdown">
                     <option value="" disabled selected>Select a track(demo)</option>
                     <option value="demo1">I ain't worried By One Republic</option>
                     <option value="demo2">Miyra By Udienxx</option>
-                </select> 
+                </select>
                 <button id="uploadbtn" class="actionbtn">LETS GO!</button>
+                <p class="noice">Use Spatial Audio Compatible Devices for the Best Experience<br>(Although any headphones can be used)</p>
                 <button id="playbtn" class="actionbtn" style="display: none;">Enter Dolby atmos ripoff</button>
                 <button class="button1" style="position:fixed; left: 50px;" id="github">Github</button>
                 <button class="button1" style="position:fixed; right: 50px;" id="twitter">About</button>
