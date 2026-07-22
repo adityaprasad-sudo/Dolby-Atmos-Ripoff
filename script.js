@@ -6,9 +6,14 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
 document.getElementById('github').addEventListener('click', function(){
     window.open('https://github.com/adityaprasad-sudo/Dolby-Atmos-Ripoff', '_blank')
 })
+function updateslide(slider) {
+            const value = (slider.value - slider.min) / (slider.max - slider.min) * 100;
+            slider.style.background = `linear-gradient(to right, #ec364f 0%, #fc864e ${value}%, #ddd ${value}%, #ddd 100%)`;
+        }
 function mix(){
     const audio = new (window.AudioContext || window.webkitAudioContext)();
     audio.suspend()
@@ -67,7 +72,7 @@ function mix(){
         }
     }
     const rendersc = new RenderPass(scene, camera)
-    const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.5, 0.4, 0.85)
+    const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.3, 0.4,0.5)
     const shinecomposer = new EffectComposer(renderguy)
     shinecomposer.addPass(rendersc)
     shinecomposer.addPass(bloom)
@@ -181,7 +186,7 @@ function mix(){
    bas.connect(analyzebas)
    soundcheck['bass'] = analyzebas
    window.mixer.gains['bass'] = bas
-   const loadbas = fetch('./music/bass.mp3')
+   const loadbas = fetch('./music/bass.wav')
    .then(res => res.arrayBuffer())
    .then(buf => audio.decodeAudioData(buf))
    .then(decoded => {
@@ -200,6 +205,31 @@ function mix(){
        orb.layers.enable(1)
        orb.userData = { angle: stem.angle, radius: 4, speed: stem.speed, name: stem.name, move: stem.move, intime: performance.now() * 0.001}
        scene.add(orb)
+       const taillength = 30
+       const tailpos = new Float32Array(taillength * 3)
+       const tailcolour = new Float32Array(taillength * 3)
+       const orbcol = new THREE.Color(stem.color)
+       for (let i = 0; i < taillength; i++) {
+           const ratio = 1 - (i/taillength)
+           tailcolour[i * 3] = orbcol.r * ratio
+        tailcolour[i * 3 +1] = orbcol.g *ratio
+    tailcolour[i * 3 +2] = orbcol.b * ratio       }
+       const tailgeo = new THREE.BufferGeometry()
+       tailgeo.setAttribute('position', new THREE.BufferAttribute(tailpos, 3))
+       tailgeo.setAttribute('color', new THREE.BufferAttribute(tailcolour, 3))
+
+       const tailmat = new THREE.PointsMaterial({ // ai helphed in making this
+        size: 0.15,
+           vertexColors: true,
+           transparent: true,
+           blending: THREE.AdditiveBlending,
+           depthWrite: false
+       })
+       const tail = new THREE.Points(tailgeo, tailmat)
+       tail.layers.enable(1)
+       scene.add(tail)
+       orb.userData.tail = tail
+       orb.userData.tailpast = []
        const orli = new THREE.PointLight(stem.color, 2, 10)
        orb.add(orli)
        const resour = resaudio.createSource()
@@ -313,6 +343,22 @@ function animate() {
                          orb.position.y = 1
                             break;}   
                     }
+                    const past  = orb.userData.tailpast
+                    past.unshift(orb.position.clone())
+                    if(history.length > 30) history.pop();
+                    const positions = ud.tail.geometry.attributes.position.array;
+                    for(let i = 0; i < past.length; i++){
+                        const rand = (Math.random() - 0.5) * (i * 0.015)
+                        positions[i*3] = past[i].x + rand
+                        positions[i*3+1] = past[i].y + rand
+                        positions[i*3+2] = past[i].z + rand
+                    }
+                    for(let i = past.length; i < 30; i++){
+                        positions[i * 3] = orb.position.x
+                        positions[i * 3 + 1] = orb.position.y
+                        positions[i * 3 + 2] = orb.position.z
+                    }
+                    ud.tail.geometry.attributes.position.needsUpdate = true
                     orb.userData.resour.setPosition(orb.position.x, orb.position.y, orb.position.z)
                     const analyzer = soundcheck[orb.userData.name]
                     if(analyzer){
@@ -428,7 +474,123 @@ playbtn.addEventListener('click', (e) =>{
     setTimeout(() => {
         mainel.style.display = "none"
         bgel.style.display = "none"
+        document.getElementById('hamburgier').style.display = 'flex';
         mix()
     }, 1000);
 
+})
+const titlestem={
+  vocals: 'vocals',
+  drums: 'drums',
+  guitar: 'guitar',
+  piano: 'piano',
+  other: 'other',
+  bass: 'bass'
+}
+const humburgier = document.getElementById('hamburgier')
+const sidebar = document.getElementById('sidebar')
+const setpan = document.getElementById('insname')
+const settile  = document.getElementById('settile')
+const volslide = document.getElementById('volslide')
+const spatialrow = document.getElementById('spatialrow')
+const spatialhint  = document.getElementById('hintspa')
+const presetbtn  = document.querySelectorAll('.presetbtn')
+const speedslide = document.getElementById('speedslide')
+const speedval = document.getElementById('speedval')
+const speedrow = document.getElementById('speedrow')
+let curins = null
+
+humburgier.addEventListener('click', () => {
+    humburgier.classList.toggle('open')
+    sidebar.classList.toggle('open')
+})
+document.querySelector('.back').addEventListener('click', () => {
+    sidebar.classList.remove('open')
+    humburgier.classList.remove('open')
+})
+function applygain(stemname){
+    const gain = window.mixer.gains[stemname]
+    if(!gain)return
+    const muted = window.mixer.muted[stemname]
+    const vol = window.mixer.volumes[stemname] ?? 100
+    gain.gain.value = muted ? 0:(vol/100)
+}
+
+function insset(stemname, label){
+    if(curins === stemname){
+        label.classList.remove('selected')
+        setpan.classList.remove('show')
+        curins = null
+        return
+    }
+    curins = stemname
+    setpan.classList.remove('show');
+    document.querySelectorAll('.label').forEach(l => l.classList.remove('selected'))
+    document.querySelectorAll('.label').forEach(l => 
+        l.classList.remove('selected')
+    );
+    label.classList.add('selected')
+    settile.textContent = label.querySelector('.labeltxt').textContent
+    setpan.classList.remove('show')
+    void setpan.offsetWidth
+    setpan.classList.add('show')
+    const vol = window.mixer.volumes[stemname] ?? 100
+    volslide.value = vol
+    updateslide(volslide)
+    const orb = window.mixer.orbs[stemname]
+    if(orb){
+        spatialrow.style.display = "flex"
+        speedrow.style.display = "flex"
+        spatialhint.style.display = "none"
+        const spd = window.mixer.speed[stemname] ?? 100
+        speedslide.value = spd
+        updateslide(speedslide)
+        speedval.innerText = (spd/100).toFixed(1) + 'x'
+        const current = orb.userData.move
+        presetbtn.forEach(b => b.classList.toggle('active', b.dataset.move === current))
+    } else{
+        spatialrow.style.display = "none"
+        speedrow.style.display = "none"
+        spatialhint.style.display = "block"
+    }
+}
+document.querySelectorAll('.label').forEach(label => {
+    const stemname = titlestem[label.id]
+    if(!stemname) return
+    label.addEventListener('click', (e) => {
+        if(e.target.closest('.toggle'))return
+        if(!window.mixer.ready){
+            stat.innerText = "Ninja enter the 3d mixer first(you are not supposed to see this)"
+            return
+        }
+        insset(stemname, label)
+    })
+    const checkbox = label.querySelector('input[type="checkbox"]')
+    checkbox.addEventListener('change', () => {
+        window.mixer.muted[stemname] = !checkbox.checked
+        applygain(stemname)
+    })
+})
+volslide.addEventListener('input', () => {
+    updateslide(this)
+    if(!curins) return
+    window.mixer.volumes[curins] = Number(this.value)
+    applygain(curins)
+})
+speedslide.addEventListener('input', () => {
+    updateSlider(this)
+    const val = Number(this.value)
+    speedval.innerText = (val / 100).toFixed(1) + 'x'
+    if(!curins) return;
+    window.mixer.speed[curins] = val
+})
+presetbtn.forEach(btn =>{
+    btn.addEventListener('click', () =>{
+      if(!curins) return
+      const orb = window.mixer.orbs[curins]
+      if(!orb) return
+      orb.userData.move = btn.dataset.move
+      presetbtn.forEach(b => b.classList.remove('active'))
+      btn.classList.add('active')
+    })
 })

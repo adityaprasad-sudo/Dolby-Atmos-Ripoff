@@ -173,7 +173,8 @@
         top: 190px;
         left: 0;
         width: 362px;
-        height: auto;
+        max-height: calc(100vh - 220px);
+        overflow: auto;
         padding-bottom: 10px;
         background-color: rgba(28, 18, 48, 0.267);
         border: 1px solid rgba(255, 255, 255, 0.267);
@@ -184,6 +185,17 @@
         box-shadow: 0 0 20px rgba(0,0,0,0.6);
         z-index: 200;
         gap: 15px;
+    }
+    .settings::-webkit-scrollbar-track {
+        background: transparent;
+        margin: 15px 0;
+    }
+    .settings::-webkit-scrollbar-thumb {
+        background-color: #8b6cf0;
+        border-radius: 20px;
+    }
+    .settings::-webkit-scrollbar {
+        width: 6px;
     }
     .settings.show{
         display: flex;
@@ -239,6 +251,7 @@
     }
     .align::-webkit-scrollbar-track{
                     background:transparent;
+                    margin: 0 15px;
     }
     .align::-webkit-scrollbar-thumb{
                     background-color: #8b6cf0;
@@ -295,6 +308,49 @@
         background-color: #968990;
         transform: translateY(5px);
     }
+    #hamburgier{
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        width: 30px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: column;
+        gap: 6px;
+        background: #1c1230;
+        border: 1px solid rgba(255, 255, 255, 0.267);
+        border-radius: 14px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        padding: 10px;
+        transition: left 0.45s cubic-bezier(0.16, 1, 0.3,1), border-color 0.3s ease;
+        cursor: pointer;
+        z-index: 200;
+    }
+    #hamburgier:hover{
+        border-color: #ef5da8;
+    }
+    #hamburgier span{
+        width: 20px;
+        height: 2px;
+        background: linear-gradient(120deg, #8b6cf0 10%, #ef5da8 60%, #c9b8f2 100%);
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+    #humburgier.open{
+        left: 385px;
+    }
+    #hamburgier.open span:nth-child(1){
+        transform: rotate(45deg) translateY(8px);
+    }
+    #hamburgier.open span:nth-child(2){
+        opacity: 0;
+    }
+    #hamburgier.open span:nth-child(3){
+        transform: rotate(-45deg) translateY(-8px);
+    }
+    
     .settile{
         margin: 0;
         font-family: "Rubik Doodle Shadow", system-ui;
@@ -315,10 +371,7 @@
     .hintspa{
         display: none;
     }
-    
-    
-    
-    </style>
+</style>
 </head>
 <body class="body">
         <div id="hamburgier">
@@ -372,6 +425,8 @@
                     <div class="setingrow">
                         <span>Volume</span>
                         <input type="range" class="volsi" id="volslide" min="0" max="100" value="100" oninput="updateslide(this)">
+                     <span>Speed</span>
+                        <input type="range" class="volsi" id="volslide" min="0" max="100" value="100" oninput="updateslide(this)">
                     </div>
                     <div class="setingrow" id="spatialrow">
                         <span>Spatial Arrangement</span>
@@ -381,6 +436,9 @@
                             <button class="presetbtn" data-move="atom">Atom</button>
                             <button class="presetbtn" data-move="infinity">Infinity</button>
                             <button class="presetbtn" data-move="circle">All Around</button>
+                            <button class="presetbtn" data-move="hoverfront">Hoverfront</button>
+                            <button class="presetbtn" data-move="clap">Clap</button>
+                            <button class="presetbtn" data-move="tele">Teleport</button>
                         </div>
                     </div>
                     <div class="setingrow hintspa" id="hintspa">
@@ -393,9 +451,9 @@
     </div>
     <script>
         function updateslide(slider) {
-                      const value = (slider.value - slider.min) / (slider.max - slider.min) * 100;
-                      slider.style.background = `linear-gradient(to right, #ec364f 0%, #fc864e ${value}%, #ddd ${value}%, #ddd 100%)`;
-                      }
+            const value = (slider.value - slider.min) / (slider.max - slider.min) * 100;
+            slider.style.background = `linear-gradient(to right, #ec364f 0%, #fc864e ${value}%, #ddd ${value}%, #ddd 100%)`;
+        }
     </script>
 </body>
 </html>
