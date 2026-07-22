@@ -168,7 +168,7 @@ function mix(){
    let drum = ''
    let oth = ''
    if(demo === 'demo1'){
-      vocal = './music/rightvocals.mp3'
+      vocal = './music/rightvocal.mp3'
       guitat = './music/rightguitar.mp3'
       paino = './music/piano.wav'
       drum = './music/rightdrum.mp3'
@@ -193,6 +193,7 @@ function mix(){
    window.mixer.volumes = {}
    window.mixer.muted = {}
    window.mixer.speed = {}
+   window.mixer.sources = {}
    window.mixer.ready = false
    const insname = ['vocals', 'drums', 'bass', 'other', 'guitar', 'paino']
    insname.forEach(n =>{
@@ -225,30 +226,35 @@ function mix(){
    }).catch(e => console.warn(`Could not load bass bruhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh`))
    pinkypromise.push(loadbas)
    const stemorbs = []
-   function spawnorb(stemname) {
-       const stem = stems.find(s => s.name === stemname)
+   window.mixer.spawnorb = function(bsename){
+       const stem = stems.find(s => s.name === bsename)
        if(!stem) return
-       const mastergain = window.mixer.gains[stemname]
-       const orbgeo = new THREE.SphereGeometry(0.3,32,32)
-       const orbmat = new THREE.MeshBasicMaterial({color: stem.color})
-       orbmat.color.multiplyScalar(3)
-       const orb = new THREE.Mesh(orbgeo, orbmat)
-       orb.layers.enable(1)
-       let activemove = stem.move
-        const activebtn = document.querySelector('.presetbtn.active')
-        if (activebtn && window.mixer.orbs[stemname].length > 0) {
-           activemove = activebtn.dataset.move 
-        }
-        orb.userData = {
-            angle: stem.angle,
-            radius: 4,
-            speed: stem.speed,
-            name: stem.name,
-            move: activemove,
-            intime: performance.now() * 0.001
-        };
-        scene.add(orb)
-        const taillength = 30
+       let copy = 1
+       while(window.mixer.orbs[`${stem.name}_copy_${copy}`]){
+        copy++
+   }
+   const newname = `${stem.name}${copy}`
+   window.mixer.volumes[newname] = 100
+   window.mixer.muted[newname] = false
+   window.mixer.speed[newname] = 100
+   const orbgeo = new THREE.SphereGeometry(0.3,32,32)
+   const orbmat = new THREE.MeshBasicMaterial({color: stem.color})
+   orbmat.color.multiplyScalar(3)
+   const orb = new THREE.Mesh(orbgeo, orbmat)
+   orb.layers.enable(1)
+   let activemove = stem.move
+   const activebtn = document.querySelector('.presetbtn.active')
+   if (activebtn) activemove = activebtn.dataset.move
+   orb.userData = {
+    angle: stem.angle,
+    radius: 4,
+    speed: stem.speed,
+    name: newname,
+    move: activemove,
+    intime: performance.now() * 0.001
+   }
+   scene.add(orb)
+   const taillength = 30
        const tailpos = new Float32Array(taillength * 3)
        const tailcolour = new Float32Array(taillength * 3)
        const orbcol = new THREE.Color(stem.color)
@@ -273,17 +279,37 @@ function mix(){
        scene.add(tail)
        orb.userData.tail = tail
        orb.userData.tailpast = []
-       const orli = new THREE.PointLight(stem.color, 2, 10)
+       const orli = new THREE.PointLight(stem.color, 2,10)
        orb.add(orli)
-       const resour = resaudio.createSource()
-       resour.setMinDistance(2)
-       resour.setMaxDistance(50)
-       resour.setRolloff('linear')
+      const resour = resaudio.createSource()
+       resour.setMinDistance(2); resour.setMaxDistance(50); resour.setRolloff('linear');
        orb.userData.resour = resour
-       mastergain.connect(resour.input)
-       window.mixer.orbs[stem.name].push(orb)
-       stemorbs.push(orb) 
-   }
+       const gain = audio.createGain()
+       gain.connect(resour.input)
+       const analyze = audio.createAnalyser()
+       analyze.fftSize = 64
+       gain.connect(analyze)
+       soundcheck[newname] = analyze
+       window.mixer.gains[newname] = gain
+       window.mixer.orbs[newname] = [orb]
+       stemorbs.push(orb)
+       if(window.mixer.sources[bsename]) {
+           window.mixer.sources[bsename].connect(gain);
+       }
+       const labour = document.createElement('div')
+       labour.className = 'label'
+       labour.id = newname
+       labour.innerHTML = `<span class="labeltxt">${bsename} ${copy}</span>
+           <label class="toggle">
+               <input type="checkbox" name="instruments" checked>
+               <div class="slider"></div>
+           </label>
+       `
+       document.querySelector('.align').appendChild(labour)
+       window.bindlabour(labour, newname)
+       labour.click()
+    }
+
    stems.forEach((stem) => {
        const orbgeo = new THREE.SphereGeometry(0.3,32,32)
        const orbmat = new THREE.MeshBasicMaterial({color: stem.color})
@@ -340,6 +366,7 @@ function mix(){
         source.loop = true
         source.connect(gain)
         source.start(0)
+        window.mixer.sources[stem.name] = source;
        }).catch(e => console.warn(`Could not load ${stem.name} bruhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh`))
        pinkypromise.push(loadtsk)
        stemorbs.push(orb)
@@ -437,7 +464,7 @@ function animate() {
                     }
                     const past  = orb.userData.tailpast
                     past.unshift(orb.position.clone())
-                    if(history.length > 30) history.pop();
+                    
                     const positions = ud.tail.geometry.attributes.position.array;
                     for(let i = 0; i < past.length; i++){
                         const rand = (Math.random() - 0.5) * (i * 0.015)
@@ -654,13 +681,11 @@ function insset(stemname, label){
         spatialhint.style.display = "block"
     }
 }
-document.querySelectorAll('.label').forEach(label => {
-    const stemname = titlestem[label.id]
-    if(!stemname) return
+window.bindlabour = function(label, stemname){
     label.addEventListener('click', (e) => {
         if(e.target.closest('.toggle'))return
         if(!window.mixer.ready){
-            stat.innerText = "Ninja enter the 3d mixer first(you are not supposed to see this)"
+            stat.innerText = "Ninja enter the 3d mixer first you shouldnt be seeing this"
             return
         }
         insset(stemname, label)
@@ -670,15 +695,20 @@ document.querySelectorAll('.label').forEach(label => {
         window.mixer.muted[stemname] = !checkbox.checked
         applygain(stemname)
     })
+}
+document.querySelectorAll('.label').forEach(label => {
+    const stemname =  titlestem[label.id]
+    if(!stemname) return
+    window.bindlabour(label, stemname)
 })
 volslide.addEventListener('input', () => {
-    updateslide(this)
+    updateslide(volslide)
     if(!curins) return
     window.mixer.volumes[curins] = Number(this.value)
     applygain(curins)
 })
 speedslide.addEventListener('input', () => {
-    updateSlider(this)
+    updateSlider(speedslide)
     const val = Number(this.value)
     speedval.innerText = (val / 100).toFixed(1) + 'x'
     if(!curins) return;
@@ -698,9 +728,7 @@ const addbtn = document.getElementById('addorbbtn')
 if(addbtn){
     addbtn.addEventListener('click', () => {
         if (!curins) return
-        spawnorb(curins)
-        const orb = window.mixer.orbs[curins]
-        const activemove = document.querySelector('.presetbtn.active').dataset.move
-        orb.forEach(orb1 => orb1.userData.move = activeMove);
+        const baseins = curins.split('_')[0];
+        window.mixer.spawnorb(baseins)
     })
 }
