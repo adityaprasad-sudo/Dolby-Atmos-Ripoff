@@ -7,13 +7,313 @@
     <style>
        @import url('https://fonts.googleapis.com/css2?family=Rubik+Doodle+Shadow&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap');
-    .body{
+    .body,html{
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+
+        background-color: #0F0A1A;
+    }
+    #sidebar{
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        width: 360px;
+        height: 180px;
+        background-color: #1c1230;
+        overflow: visible;
+        border-radius: 15px;
+        z-index: 100;
+        opacity: 0.9;
+        backdrop-filter: blur(100px);
+        -webkit-backdrop-filter: blur(100px);
+        box-shadow: 0px 30px 80px rgba(0, 0, 0, 0.55);
+        border: 1px solid rgba(255, 255, 255, 0.267);
+        flex-direction: column;
+        gap: 15px;
         display: flex;
+        color: #c9b8f2;
+        font-family: 'Hanken Grotesk',system-ui, sans-serif;
+    }
+    #sidebar h3{
+        margin: 0;
+        font-family: "Rubik Doodle Shadow", system-ui;
+        align-items: center;
+        display: flex;
+        height: 50px;
+        font-size: 35px;
+        line-height: 1;
+        left: -4px;
+        top: 4px;
+        padding-left: 10px;
+        text-decoration-color: #c9b8f2;
+        color: transparent;
+        background:linear-gradient(120deg, #8b6cf0 10%, #ef5da8 60%, #c9b8f2 100%);
+        background-clip: text;
+        letter-spacing: 2px;
+    }
+    .toggle{
         position: relative;
+        display: inline-block;
+        width: 70px;
+        height: 34px;
+        margin-top: 5px;
+    }
+    .toggle input{
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .slider{
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s ease-in-out;
+        border-radius: 34px;
+    }
+    .slider::after{
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: #080004;
+        transition: .4s ease-in-out;
+        border-radius: 50%;
+    }
+    .slider::before{
+        position: absolute;
+        content: "OFF";
+        right: 12px;
+        top: 9px;
+        color: #39294b;
+        font-size: 12px;
+        transition: .4s ease-in-out;
+
+    }
+    .toggle input:checked + .slider{
+        background-color: #ef5da8;
+    }
+    .toggle input:checked + .slider::before{
+        content: "ON";
+        left: 12px;
+        right: auto;
+        color: #39294b;
+    }
+    .toggle input:checked + .slider::after{
+        transform: translateX(36px);
+        background-color: #3b1139;
+    }
+    .label{
+        position: relative;
+        top: 5px;
+        border-radius: 20px;
+        background-color: #1f1135;
+        width: 90px;
+        height: 90px;
+        border: 1px solid rgba(255, 255, 255, 0.267);
+        cursor: pointer;
+        gap: 10px;
+        display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
-        min-height: 100vh;
-        background-color: #0F0A1A;
+        transition: all .2s ease-in-out;
+        flex-shrink: 0;
+    }
+    .back::before{
+                    content: "";
+                    cursor: pointer;
+                    width: 50px;
+                    height: 30px;
+                    padding-left: 10px;
+                    background-size:50px ;
+                    background-repeat: no-repeat;
+                    background-image: url('./images/back.png');
+                    background-position: center;
+                    rotate: 180deg;
+                    flex-shrink: 0;
+   }
+   .volsi{
+    width: 260px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    color: #000000;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+   }
+   input[type="range"]{
+       -webkit-appearance: none;
+       appearance: none;
+       width: 270px;
+       background: #17001a;
+       height: 8px;
+       border-radius: 10px;   
+   }
+   input[type="range"]::-webkit-slider-thumb{
+       -webkit-appearance: none;
+  width: 20px;
+  height: 20px;  
+  border-radius: 50%;
+  background: url('./images/hackclub.png');
+  background-size: contain
+   }
+    .back{
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .settings{
+        display: flex;
+        position: absolute;
+        top: 190px;
+        left: 0;
+        width: 362px;
+        height: auto;
+        padding-bottom: 10px;
+        background-color: rgba(28, 18, 48, 0.267);
+        border: 1px solid rgba(255, 255, 255, 0.267);
+        border-radius: 15px;
+        padding: 15px;
+        flex-direction: column;
+        box-sizing: border-box;
+        box-shadow: 0 0 20px rgba(0,0,0,0.6);
+        z-index: 200;
+        gap: 15px;
+    }
+    .settings.show{
+        display: flex;
+        animation: slidedown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes slidedown {
+        0%{
+            opacity: 0;
+            transform: translateY(-20px) scaleY(0.95);
+        }
+        100%{
+            opacity:1;
+            transform: translateY(0) scaleY(1);
+        }
+    }
+    .setingrow{
+        font-size: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+    .label:hover{
+        background-color: #3a2746;
+        border: 1px solid #eeeeec;
+    }
+    .label:has(input:checked){
+        background-color: #3b1139;
+        border: 1px solid #ef5da8;
+    }
+    .label:has(input:checked):hover {
+        background-color: #3a2746;
+        border: 1px solid #ef5da8;
+        transform: translateY(-5px);
+    }
+    .label:has(input:checked):active{
+        transform: translateY(2px);
+    }
+    .labeltxt{
+        font-size: 12px;
+        color: #c9b8f2;
+        font-family: 'Hanken Grotesk',system-ui, sans-serif;}
+    .align{
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-bottom: 18px;
+        padding-left: 12px;
+        padding-right: 10px;
+        scroll-behavior: smooth;
+    }
+    .align::-webkit-scrollbar-track{
+                    background:transparent;
+    }
+    .align::-webkit-scrollbar-thumb{
+                    background-color: #8b6cf0;
+                    border-radius: 20px;
+                  }
+    .align::-webkit-scrollbar{
+                    height: 5px;
+                    
+                    padding-bottom: 0;
+                  }
+    .wrap{
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+    .labeltxt{
+        font-size: 16px;
+        color: #c9b8f2;
+        font-family: 'Hanken Grotesk',system-ui, sans-serif;
+    }
+    .presentcol{
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+    .settingrow{
+        font-size: 20px;
+        display:flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+    .presetbtn{
+        font-size: 30px;
+        color: #f5f3f7;
+        margin-top: 10px;
+        width: 200px;
+        height: 60px;
+        background-color: #ef5da8;
+        border-radius: 20px;
+        backdrop-filter: blur(20px);
+        -webkit-background-filter: blur(20px);
+        cursor: pointer;
+        border: 1px solid rgba(252, 251, 251, 0.363);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+        transition: all .2s ease-in-out;
+    }
+    .presetbtn:hover{
+        background-color: #c9b8f2;
+        box-shadow: 0 10px 20px rgba(201,184,242,0.5)
+    }
+    .presetbtn:active{
+        background-color: #968990;
+        transform: translateY(5px);
+    }
+    .settile{
+        margin: 0;
+        font-family: "Rubik Doodle Shadow", system-ui;
+        align-items: center;
+        display: flex;
+        height: 50px;
+        font-size: 35px;
+        line-height: 1;
+        left: -4px;
+        top: 4px;
+        padding-left: 10px;
+        text-decoration-color: #c9b8f2;
+        color: transparent;
+        background:linear-gradient(120deg, #8b6cf0 10%, #ef5da8 60%, #c9b8f2 100%);
+        background-clip: text;
+        letter-spacing: 2px;
+    }
+    .hintspa{
+        display: none;
     }
     
     
@@ -21,7 +321,81 @@
     </style>
 </head>
 <body class="body">
-        <h1>sidebartest</h1>
+        <div id="hamburgier">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div id="sidebar">
+            <div class="back"> <h3>Customize</h3></div>
+            <div class="wrap">
+                <div class="align">
+                    <div class="label" id="vocals">
+                        <span class="labeltxt">Vocals</span>
+                        <label class="toggle">
+                            <input type="checkbox" name="instruments" checked>
+                            <div class="slider"></div>
+                        </label>
+                    </div>
+                    <div class="label" id="drums">
+                        <span class="labeltxt">Drums</span>
+                        <label class="toggle">
+                            <input type="checkbox" name="instruments" checked>
+                            <div class="slider"></div>
+                        </label>
+                    </div>
+                    <div class="label" id="guitar">
+                        <span class="labeltxt">Guitar</span>
+                        <label class="toggle">
+                            <input type="checkbox" name="instruments" checked>
+                            <div class="slider"></div>
+                        </label>
+                    </div>
+                    <div class="label" id="paino">
+                        <span class="labeltxt">Paino</span>
+                        <label class="toggle">
+                            <input type="checkbox" name="instruments" checked>
+                            <div class="slider"></div>
+                        </label>
+                    </div>
+                    <div class="label" id="bass">
+                        <span class="labeltxt">Bass</span>
+                        <label class="toggle">
+                            <input type="checkbox" name="instruments" checked>
+                            <div class="slider"></div>
+                        </label>
+                    </div>
+                    
+                </div>
+                <div class="settings" id ="vocalsettings">
+                    <div class="settile" id="settile">Vocals</div>
+                    <div class="setingrow">
+                        <span>Volume</span>
+                        <input type="range" class="volsi" id="volslide" min="0" max="100" value="100" oninput="updateslide(this)">
+                    </div>
+                    <div class="setingrow" id="spatialrow">
+                        <span>Spatial Arrangement</span>
+                        <div class="presentcol" id="presetbtn">
+                            <button class="presetbtn active" data-move="behind">Behind</button>
+                            <button class="presetbtn" data-move="overhead">Overhead</button>
+                            <button class="presetbtn" data-move="atom">Atom</button>
+                            <button class="presetbtn" data-move="infinity">Infinity</button>
+                            <button class="presetbtn" data-move="circle">All Around</button>
+                        </div>
+                    </div>
+                    <div class="setingrow hintspa" id="hintspa">
+                        <span>Hint</span>
+                        <p>Use Spatial Audio Compatible Devices for the Best Experience<br>(Although any headphones can be used)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    <script>
+        function updateslide(slider) {
+                      const value = (slider.value - slider.min) / (slider.max - slider.min) * 100;
+                      slider.style.background = `linear-gradient(to right, #ec364f 0%, #fc864e ${value}%, #ddd ${value}%, #ddd 100%)`;
+                      }
+    </script>
 </body>
 </html>
