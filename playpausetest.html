@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>testing three js</title>
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background-color: #050110; 
+            color: white;
+            font-family: sans-serif;
+        }
+        #playpausebtn{
+            background-color: #ef5da8;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: all 0.3s ease-in-out;
+        }
+        #playpausebtn:hover{
+            background-color: #8b6cf0;
+        }
+        #playercontrol{
+            position: absolute;
+            top: calc(100vh - 100px);
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            z-index: 100; 
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+        
+    </style>
+</head>
+<body>
+    
+    <div id="playercontrol">
+        <button id="playpausebtn">⏸</button>
+        <span id="currenttime">0:00</span>
+        <input type="range" id="progressbar" min="0" max="100" value="0">
+        <span id="totaltime">0:00</span>
+    </div>
+    </body>
+</html>
