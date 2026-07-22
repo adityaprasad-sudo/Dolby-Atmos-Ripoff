@@ -14,6 +14,8 @@ function updateslide(slider) {
             const value = (slider.value - slider.min) / (slider.max - slider.min) * 100;
             slider.style.background = `linear-gradient(to right, #ec364f 0%, #fc864e ${value}%, #ddd ${value}%, #ddd 100%)`;
         }
+let iaintworried = false
+let miyra = false
 function mix(){
     const audio = new (window.AudioContext || window.webkitAudioContext)();
     audio.suspend()
@@ -159,12 +161,31 @@ function mix(){
    const hemi = new THREE.HemisphereLight(0x8888ff, 0x120022, 1.1)
    scene.add(hemi)
    const pinkypromise = []
+   const demo = document.getElementById('dropdown').value
+   let vocal = ''
+   let guitat = ''
+   let paino = ''
+   let drum = ''
+   let oth = ''
+   if(demo === 'demo1'){
+      vocal = './music/rightvocals.mp3'
+      guitat = './music/rightguitar.mp3'
+      paino = './music/piano.wav'
+      drum = './music/rightdrum.mp3'
+      oth = './music/other.wav'
+   }else if (demo === 'demo2'){
+    vocal = './music/miyra/vocals.wav'
+    guitat = './music/miyra/guitar.wav'
+    paino = './music/miyra/piano.wav'
+    drum = './music/miyra/drums.wav'
+    oth = './music/miyra/other.wav'
+   }
    const stems = [
-    { name: 'vocals', color: 0xffffff, path: './music/rightvocal.mp3', angle: 0, speed: 0.015, move: 'behind' },
-      { name: 'guitar', color: 0x6aff9d, path: './music/rightguitar.mp3', angle: Math.PI * 2 / 5,speed: 0.02, move: 'tele' },
-      { name: 'piano', color: 0x5ce1ff, path: './music/piano.wav', angle: Math.PI * 4 / 5, speed: 0.01,move: 'clap' },
-      { name: 'drums', color: 0xff2f92, path: './music/rightdrum.mp3', angle: Math.PI * 6 / 5 , speed: 0.01,    move: 'atom'},
-      { name: 'other', color: 0xffe45c, path: './music/other.wav', angle: Math.PI * 8 / 5 , speed: 0.008,    move: 'infinity'},
+    { name: 'vocals', color: 0xffffff, path: vocal, angle: 0, speed: 0.015, move: 'behind' },
+      { name: 'guitar', color: 0x6aff9d, path: guitat, angle: Math.PI * 2 / 5,speed: 0.02, move: 'tele' },
+      { name: 'piano', color: 0x5ce1ff, path: paino, angle: Math.PI * 4 / 5, speed: 0.01,move: 'clap' },
+      { name: 'drums', color: 0xff2f92, path: drum, angle: Math.PI * 6 / 5 , speed: 0.01,    move: 'atom'},
+      { name: 'other', color: 0xffe45c, path: oth, angle: Math.PI * 8 / 5 , speed: 0.008,    move: 'infinity'},
    ]
    const soundcheck ={}
    window.mixer.gains = {}
@@ -186,7 +207,13 @@ function mix(){
    bas.connect(analyzebas)
    soundcheck['bass'] = analyzebas
    window.mixer.gains['bass'] = bas
-   const loadbas = fetch('./music/bass.wav')
+   let basspath = ''
+   if(demo === 'demo1'){
+    basspath = './music/bass.wav'
+   }else if (demo === 'demo2'){
+       basspath = './music/miyra/bass.wav'
+   }
+   const loadbas = fetch(basspath)
    .then(res => res.arrayBuffer())
    .then(buf => audio.decodeAudioData(buf))
    .then(decoded => {
@@ -198,6 +225,65 @@ function mix(){
    }).catch(e => console.warn(`Could not load bass bruhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh`))
    pinkypromise.push(loadbas)
    const stemorbs = []
+   function spawnorb(stemname) {
+       const stem = stems.find(s => s.name === stemname)
+       if(!stem) return
+       const mastergain = window.mixer.gains[stemname]
+       const orbgeo = new THREE.SphereGeometry(0.3,32,32)
+       const orbmat = new THREE.MeshBasicMaterial({color: stem.color})
+       orbmat.color.multiplyScalar(3)
+       const orb = new THREE.Mesh(orbgeo, orbmat)
+       orb.layers.enable(1)
+       let activemove = stem.move
+        const activebtn = document.querySelector('.presetbtn.active')
+        if (activebtn && window.mixer.orbs[stemname].length > 0) {
+           activemove = activebtn.dataset.move 
+        }
+        orb.userData = {
+            angle: stem.angle,
+            radius: 4,
+            speed: stem.speed,
+            name: stem.name,
+            move: activemove,
+            intime: performance.now() * 0.001
+        };
+        scene.add(orb)
+        const taillength = 30
+       const tailpos = new Float32Array(taillength * 3)
+       const tailcolour = new Float32Array(taillength * 3)
+       const orbcol = new THREE.Color(stem.color)
+       for (let i = 0; i < taillength; i++) {
+           const ratio = 1 - (i/taillength)
+           tailcolour[i * 3] = orbcol.r * ratio
+        tailcolour[i * 3 +1] = orbcol.g *ratio
+    tailcolour[i * 3 +2] = orbcol.b * ratio       }
+       const tailgeo = new THREE.BufferGeometry()
+       tailgeo.setAttribute('position', new THREE.BufferAttribute(tailpos, 3))
+       tailgeo.setAttribute('color', new THREE.BufferAttribute(tailcolour, 3))
+
+       const tailmat = new THREE.PointsMaterial({ // ai helphed in making this
+        size: 0.15,
+           vertexColors: true,
+           transparent: true,
+           blending: THREE.AdditiveBlending,
+           depthWrite: false
+       })
+       const tail = new THREE.Points(tailgeo, tailmat)
+       tail.layers.enable(1)
+       scene.add(tail)
+       orb.userData.tail = tail
+       orb.userData.tailpast = []
+       const orli = new THREE.PointLight(stem.color, 2, 10)
+       orb.add(orli)
+       const resour = resaudio.createSource()
+       resour.setMinDistance(2)
+       resour.setMaxDistance(50)
+       resour.setRolloff('linear')
+       orb.userData.resour = resour
+       mastergain.connect(resour.input)
+       window.mixer.orbs[stem.name].push(orb)
+       stemorbs.push(orb) 
+   }
    stems.forEach((stem) => {
        const orbgeo = new THREE.SphereGeometry(0.3,32,32)
        const orbmat = new THREE.MeshBasicMaterial({color: stem.color})
@@ -244,7 +330,7 @@ function mix(){
        gain.connect(analyze)
        soundcheck[stem.name] = analyze
        window.mixer.gains[stem.name] = gain
-       window.mixer.orbs[stem.name] = orb
+       window.mixer.orbs[stem.name] = [orb]
        const loadtsk = fetch(stem.path)
        .then(res => res.arrayBuffer())
        .then(buf => audio.decodeAudioData(buf))
@@ -341,7 +427,13 @@ function animate() {
                         orb.position.x = snap*5
                             orb.position.z=0
                          orb.position.y = 1
-                            break;}   
+                            break;}
+                         case 'fountain': {
+                            orb.position.x = Math.cos(ud.angle * 2) * 2.5; 
+                            orb.position.z = Math.sin(ud.angle * 2) * 2.5; 
+                            orb.position.y = 0.5 + Math.abs(Math.sin(ud.angle * 4)) * 5; 
+                            break;
+                        } 
                     }
                     const past  = orb.userData.tailpast
                     past.unshift(orb.position.clone())
@@ -421,6 +513,14 @@ fileinpu.addEventListener('change', (e)     =>{
         dropdown.style.cursor = "not-allowed"
     }
 })
+
+if(dropdown.value === "demo1"){
+    iaintworried = true
+    miyra = false
+}else if (dropdown.value === "demo2"){
+    miyra = true
+    iaintworried = false
+}
 dropdown.addEventListener('change', () => {
     if(dropdown.value !== '0'){
         fileinpu.disabled = true
@@ -538,7 +638,7 @@ function insset(stemname, label){
     volslide.value = vol
     updateslide(volslide)
     const orb = window.mixer.orbs[stemname]
-    if(orb){
+    if(orb && orb.length > 0){
         spatialrow.style.display = "flex"
         speedrow.style.display = "flex"
         spatialhint.style.display = "none"
@@ -546,7 +646,7 @@ function insset(stemname, label){
         speedslide.value = spd
         updateslide(speedslide)
         speedval.innerText = (spd/100).toFixed(1) + 'x'
-        const current = orb.userData.move
+        const current = orb[0].userData.move
         presetbtn.forEach(b => b.classList.toggle('active', b.dataset.move === current))
     } else{
         spatialrow.style.display = "none"
@@ -588,9 +688,19 @@ presetbtn.forEach(btn =>{
     btn.addEventListener('click', () =>{
       if(!curins) return
       const orb = window.mixer.orbs[curins]
-      if(!orb) return
-      orb.userData.move = btn.dataset.move
+      if(!orb || orb.length === 0) return
+      orb.forEach(o => o.userData.move = btn.dataset.move)
       presetbtn.forEach(b => b.classList.remove('active'))
       btn.classList.add('active')
     })
 })
+const addbtn = document.getElementById('addorbbtn')
+if(addbtn){
+    addbtn.addEventListener('click', () => {
+        if (!curins) return
+        spawnorb(curins)
+        const orb = window.mixer.orbs[curins]
+        const activemove = document.querySelector('.presetbtn.active').dataset.move
+        orb.forEach(orb1 => orb1.userData.move = activeMove);
+    })
+}

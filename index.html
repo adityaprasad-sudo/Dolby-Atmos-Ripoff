@@ -726,6 +726,13 @@
     .hintspa{
         display: none;
     }
+    .extorb{
+    width: 100%;
+    height: 40px;
+    font-size: 18px;
+    margin-bottom: 5px;
+    background-color: #8b6cf0;
+    }
     
 
 
@@ -764,8 +771,9 @@
                     <option value="demo2">Miyra By Udienxx</option>
                 </select>
                 <button id="uploadbtn" class="actionbtn">LETS GO!</button>
-                <p class="noice">Use Spatial Audio Compatible Devices for the Best Experience<br>(Although any headphones can be used)</p>
                 <button id="playbtn" class="actionbtn" style="display: none;">Enter Dolby atmos ripoff</button>
+                <p class="noice">Use Spatial Audio Compatible Devices for the Best Experience<br>(Although any headphones can be used)</p>
+                
                 
             </div>
             <button class="button1" style="position:absolute; left: 50px; bottom: 30px;" id="github">Github</button>
@@ -816,7 +824,13 @@
                             <div class="slider"></div>
                         </label>
                     </div>
-                    
+                    <div class="label" id="other">
+                        <span class="labeltxt">Others</span>
+                        <label class="toggle">
+                            <input type="checkbox" name="instruments" checked>
+                            <div class="slider"></div>
+                        </label>
+                    </div>
                 </div>
                 <div class="settings" id ="insname">
                     <div class="settile" id="settile">Vocals</div>
@@ -829,6 +843,7 @@
                           <input type="range" class="volsi" id="speedslide" min="0" max="300" value="100" oninput="updateSlider(this)">
                         </div>
                     <div class="setingrow" id="spatialrow">
+                        <button id="addorbbtn" class="presetbtn extorb">+ Spawn Extra Orb</button>
                         <span>Spatial Arrangement</span>
                         <div class="presentcol" id="presetbtn">
                             <button class="presetbtn active" data-move="behind">Behind</button>
@@ -839,6 +854,7 @@
                             <button class="presetbtn" data-move="hoverfront">Hoverfront</button>
                             <button class="presetbtn" data-move="clap">Clap</button>
                             <button class="presetbtn" data-move="tele">Teleport</button>
+                            <button class="presetbtn" data-move="fountain">Fountain</button>
                         </div>
                     </div>
                     <div class="setingrow hintspa" id="hintspa">
