@@ -179,6 +179,12 @@ function mix(){
     paino = './music/miyra/piano.wav'
     drum = './music/miyra/drums.wav'
     oth = './music/miyra/other.wav'
+   } else if (demo === 'demo3'){
+    vocal = './music/cureforme/vocals.wav'
+    guitat = './music/cureforme/guitar.wav'
+    paino = './music/cureforme/piano.wav'
+    drum = './music/cureforme/drums.wav'
+    oth = './music/cureforme/other.wav'
    }
    const stems = [
     { name: 'vocals', color: 0xffffff, path: vocal, angle: 0, speed: 0.015, move: 'behind' },
@@ -230,6 +236,8 @@ function mix(){
     basspath = './music/bass.wav'
    }else if (demo === 'demo2'){
        basspath = './music/miyra/bass.wav'
+   }else if (demo === 'demo3'){
+       basspath = './music/cureforme/bass.wav'
    }
    const loadbas = fetch(basspath)
    .then(res => res.arrayBuffer())
