@@ -220,7 +220,7 @@ https://huggingface.co/spaces/AmbitiousPotato/Spectra
 ME
 
 ## Flowchart
-
+![flowchart](https://github.com/adityaprasad-sudo/Dolby-Atmos-Ripoff/blob/main/images/flowchart.png?raw=true)
 
 # THANK YOU FOR READING
 
