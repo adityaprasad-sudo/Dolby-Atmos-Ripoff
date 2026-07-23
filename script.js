@@ -167,31 +167,85 @@ function mix(){
    let paino = ''
    let drum = ''
    let oth = ''
+   let vomove = ''
+let guimove = ''
+let paimove = ''
+let drummove = ''
+let othmove = ''
+let vospd = 0
+let guispd = 0
+let paispd = 0
+let drumspd = 0
+let othspd = 0
+
    if(demo === 'demo1'){
+     vomove = 'behind'
+     guimove = 'tele'
+     paimove = 'fountain'
+     drummove = 'atom'
+     othmove = 'overhead'
+     drumspd = 0.02
+     guispd = 0.05
+     othspd = 0.04
       vocal = './music/rightvocal.mp3'
       guitat = './music/rightguitar.mp3'
       paino = './music/piano.wav'
       drum = './music/rightdrum.mp3'
       oth = './music/other.wav'
    }else if (demo === 'demo2'){
+    vomove = 'overhead'
+    vospd = 0.1
+    drummove = 'atom'
+    drumspd = 0.02
+    guimove = 'fountain'
+    guispd = 0.01
+    othmove = 'tele'
+    othspd = 0.05
+    paimove = 'infinity'
+    paispd = 0.01
     vocal = './music/miyra/vocals.wav'
     guitat = './music/miyra/guitar.wav'
     paino = './music/miyra/piano.wav'
     drum = './music/miyra/drums.wav'
     oth = './music/miyra/other.wav'
    } else if (demo === 'demo3'){
+    vomove = 'behind'
+    drummove = 'atom'
+    drumspd = 0.02
+    guimove = 'infinity'
+    guispd = 0.01
+    othmove = 'overhead'
+    othspd = 0.04
+    paimove = 'tele'
+    paispd = 0.05
     vocal = './music/cureforme/vocals.wav'
     guitat = './music/cureforme/guitar.wav'
     paino = './music/cureforme/piano.wav'
     drum = './music/cureforme/drums.wav'
     oth = './music/cureforme/other.wav'
+   } else if (demo === 'demo4'){
+    vomove = 'overhead'
+    vospd = 0.03
+    paimove = 'atom'
+    paispd = 0.01
+    guimove = 'infinity'
+    guispd = 0.01
+    drummove = 'hoverfront'
+    drumspd = 0.02
+    othmove = 'fountain'
+    othspd = 0.01
+    vocal = './music/luar/vocals.wav'
+    guitat = './music/luar/guitar.wav'
+    paino = './music/luar/piano.wav'
+    drum = './music/luar/drums.wav'
+    oth = './music/luar/other.wav'
    }
    const stems = [
-    { name: 'vocals', color: 0xffffff, path: vocal, angle: 0, speed: 0.015, move: 'behind' },
-      { name: 'guitar', color: 0x6aff9d, path: guitat, angle: Math.PI * 2 / 5,speed: 0.02, move: 'tele' },
-      { name: 'piano', color: 0x5ce1ff, path: paino, angle: Math.PI * 4 / 5, speed: 0.01,move: 'clap' },
-      { name: 'drums', color: 0xff2f92, path: drum, angle: Math.PI * 6 / 5 , speed: 0.01,    move: 'atom'},
-      { name: 'other', color: 0xffe45c, path: oth, angle: Math.PI * 8 / 5 , speed: 0.008,    move: 'infinity'},
+    { name: 'vocals', color: 0xffffff, path: vocal, angle: 0, speed: vospd, move: vomove },
+      { name: 'guitar', color: 0x6aff9d, path: guitat, angle: Math.PI * 2 / 5,speed: guispd, move: guimove },
+      { name: 'piano', color: 0x5ce1ff, path: paino, angle: Math.PI * 4 / 5, speed: paispd,move: paimove },
+      { name: 'drums', color: 0xff2f92, path: drum, angle: Math.PI * 6 / 5 , speed: drumspd,    move: drummove},
+      { name: 'other', color: 0xffe45c, path: oth, angle: Math.PI * 8 / 5 , speed: othspd,    move: othmove},
    ]
    const soundcheck ={}
    window.mixer.gains = {}
@@ -238,6 +292,8 @@ function mix(){
        basspath = './music/miyra/bass.wav'
    }else if (demo === 'demo3'){
        basspath = './music/cureforme/bass.wav'
+   } else if (demo === 'demo4'){
+    basspath = './music/luar/bass.wav'
    }
    const loadbas = fetch(basspath)
    .then(res => res.arrayBuffer())
