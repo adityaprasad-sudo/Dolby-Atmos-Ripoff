@@ -7,7 +7,9 @@
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Rubik+Doodle+Shadow&display=swap');
             @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap');
-           body,html{
+            @import url('https://fonts.googleapis.com/css2?family=Bitcount+Grid+Double:wght@100..900&display=swap');
+
+            body,html{
             margin: 0;
             padding: 0;
             height: 100%;
@@ -252,6 +254,67 @@
                 transform: translateY(0px);
             }
            }
+           .load{
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 50px;
+            font-weight: bold;
+            color: #f10065;
+            text-shadow: 0.3px 5px 9px  #f1006460;
+        }
+        .load span:nth-child(1){
+            color: #f10065;
+            animation: load 1s ease-in-out infinite;
+        }
+        .load span:nth-child(2){
+            color: #f10065;
+            animation: load 1s ease-in-out infinite;
+            animation-delay: 0.2s;
+        }
+        .load span:nth-child(3){
+            color: #f10065;
+            animation: load 1s ease-in-out infinite;
+            animation-delay: 0.4s;
+        }
+        @keyframes load {
+            0%{
+                opacity: 0.1;
+            }
+            50%{
+                opacity: 1;
+            }
+            100%{
+                opacity: 0;
+            }
+        }
+        .progress {
+          background: rgba(255,255,255,0.1);
+          justify-content: flex-start;
+          border-radius: 100px;
+          align-items: center;
+          position: relative;
+          padding: 0 5px;
+          display: flex;
+          height: 40px;
+          width: 300px;
+          z-index: 9999;
+          margin-top: 20px;
+        }
+
+        .progressval {
+            z-index: 99999;
+           animation: loader 3s normal forwards;
+           box-shadow: 0 10px 40px -10px #fd0054;
+           border-radius: 100px;
+           background: #fd0054;
+           height: 30px;
+           width: 0;
+        }
            .wiigle{
             text-decoration: underline wavy 7px;
             text-decoration-color: #c9b8f2;
@@ -726,6 +789,59 @@
     .hintspa{
         display: none;
     }
+    #playpausebtn{
+            
+            background-color: #ef5da8;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: all 0.3s ease-in-out;
+        }
+        #playpausebtn:hover{
+            background-color: #f0055f;
+        }
+        #playercontrol{
+            display: none;
+            width: 350px;
+            left: 20px;
+            background-color: #17001a;
+            border-radius: 30px;
+            position: absolute;
+            top: calc(100vh - 100px);
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            z-index: 100; 
+            padding: 10px 15px;
+            
+        }
+        #progressbar {
+        flex-grow: 1;
+        height: 6px;
+        -webkit-appearance: none;
+        background: #ef5da8;
+        border-radius: 10px;
+        pointer-events: none;
+    }
+    #progressbar::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #f00453;
+    }
+        .time{
+            font-size: 20px;
+            font-family: 'Bitcount Grid Double', sans-serif;
+            font-weight: 600;
+        }
     .extorb{
     width: 100%;
     height: 40px;
@@ -864,6 +980,19 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="load" id="chigga">
+        Loading<span>.</span><span>.</span><span>.</span>
+        <div  class=" progress">
+      <div class="progressval"></div>
+    </div>
+    </div>
+    
+    <div  id="playercontrol" >
+        <button id="playpausebtn"><span style="font-size: 16px;">||</span></button>
+        <span class= "time" id="currenttime">0:00</span>
+        <input type="range" id="progressbar" min="0" max="100" value="0">
+        <span class= "time" id="totaltime">0:00</span>
     </div>
         <script type="module" src="script.js"></script>
     </body>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>testing three js</title>
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background-color: #050110; 
+            color: white;
+            font-family: sans-serif;
+        }
+        .load{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 50px;
+            font-weight: bold;
+            color: #f10065;
+            text-shadow: 0.3px 5px 9px  #f1006460;
+        }
+        .load span:nth-child(1){
+            color: #f10065;
+            animation: load 1s ease-in-out infinite;
+        }
+        .load span:nth-child(2){
+            color: #f10065;
+            animation: load 1s ease-in-out infinite;
+            animation-delay: 0.2s;
+        }
+        .load span:nth-child(3){
+            color: #f10065;
+            animation: load 1s ease-in-out infinite;
+            animation-delay: 0.4s;
+        }
+        @keyframes load {
+            0%{
+                opacity: 0.1;
+            }
+            50%{
+                opacity: 1;
+            }
+            100%{
+                opacity: 0;
+            }
+        }
+        .progress {
+          background: rgba(255,255,255,0.1);
+          justify-content: flex-start;
+          border-radius: 100px;
+          align-items: center;
+          position: relative;
+          padding: 0 5px;
+          display: flex;
+          height: 40px;
+          width: 100%;
+          margin-top: 20px;
+        }
+
+        .progressval {
+           animation: loader 3s normal forwards;
+           box-shadow: 0 10px 40px -10px #fd0054;
+           border-radius: 100px;
+           background: #fd0054;
+           height: 30px;
+           width: 0;
+        }
+        @keyframes loader {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="load">
+        Loading<span>.</span><span>.</span><span>.</span>
+        <div  class=" progress">
+      <div class="progressval"></div>
+    </div>
+    </div>
+    
+
+    </body>
+</html>

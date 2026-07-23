@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>testing three js</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bitcount+Grid+Double:wght@100..900&display=swap');
         body { 
             margin: 0; 
             overflow: hidden; 
@@ -27,9 +28,12 @@
             transition: all 0.3s ease-in-out;
         }
         #playpausebtn:hover{
-            background-color: #8b6cf0;
+            background-color: #f0055f;
         }
         #playercontrol{
+            left: 20px;
+            background-color: #17001a;
+            border-radius: 30px;
             position: absolute;
             top: calc(100vh - 100px);
             align-items: center;
@@ -38,18 +42,39 @@
             gap: 20px;
             z-index: 100; 
             padding: 10px 15px;
-            cursor: pointer;
+            
         }
+        #progressbar {
+        flex-grow: 1;
+        height: 6px;
+        -webkit-appearance: none;
+        background: #ef5da8;
+        border-radius: 10px;
+        pointer-events: none;
+    }
+    #progressbar::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #f00453;
+    }
+        .time{
+            font-size: 20px;
+            font-family: 'Bitcount Grid Double', sans-serif;
+            font-weight: 600;
+        }
+        
         
     </style>
 </head>
 <body>
     
-    <div id="playercontrol">
-        <button id="playpausebtn">⏸</button>
-        <span id="currenttime">0:00</span>
+    <div id="playercontrol" >
+        <button id="playpausebtn"><span style="font-size: 16px;">||</span></button>
+        <span class= "time" id="currenttime">0:00</span>
         <input type="range" id="progressbar" min="0" max="100" value="0">
-        <span id="totaltime">0:00</span>
+        <span class= "time" id="totaltime">0:00</span>
     </div>
     </body>
 </html>

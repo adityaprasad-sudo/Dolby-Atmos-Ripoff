@@ -190,11 +190,15 @@ function mix(){
    const soundcheck ={}
    window.mixer.gains = {}
    window.mixer.orbs = {}
+   window.mixer.content = audio
+   window.mixer.duration= 0
    window.mixer.volumes = {}
    window.mixer.muted = {}
    window.mixer.speed = {}
    window.mixer.sources = {}
    window.mixer.ready = false
+   document.getElementById('chigga').style.display = 'block'
+   document.getElementById('cancont').style.visibility = 'hidden'
    const insname = ['vocals', 'drums', 'bass', 'other', 'guitar', 'paino']
    insname.forEach(n =>{
     window.mixer.volumes[n] = 100
@@ -218,6 +222,7 @@ function mix(){
    .then(res => res.arrayBuffer())
    .then(buf => audio.decodeAudioData(buf))
    .then(decoded => {
+    window.mixer.duration = Math.max(window.mixer.duration , decoded.duration)
     const source = audio.createBufferSource()
     source.buffer = decoded
     source.loop = true
@@ -361,6 +366,7 @@ function mix(){
        .then(res => res.arrayBuffer())
        .then(buf => audio.decodeAudioData(buf))
        .then(decoded => {
+             window.mixer.duration = Math.max(window.mixer.duration , decoded.duration)
         const source = audio.createBufferSource()
         source.buffer = decoded
         source.loop = true
@@ -374,7 +380,10 @@ function mix(){
 })
 Promise.all(pinkypromise).then(() => {
     audio.resume()
-    console.log("Audio perfectly synced and unfrozen!!")
+    document.getElementById('chigga').style.display = 'none'
+    document.getElementById('cancont').style.visibility = 'visible'
+    document.getElementById('playercontrol').style.display = 'flex'
+    // no ned now console.log("Audio perfectly synced and unfrozen!!")
 })
 function getavg(analyze){
     const data = new Uint8Array(analyze.frequencyBinCount)
@@ -509,6 +518,19 @@ function animate() {
                 auramesh.geometry.computeVertexNormals()
                 blobgrp.scale.setScalar(1+(avg*0.8))
                 auramesh.material.emissiveIntensity=0.5+(avg*4)
+                const ctx = window.mixer.content
+        if(ctx && window.mixer.duration > 0 && ctx.state === 'running') {
+            const curr = ctx.currentTime % window.mixer.duration
+           const pbar = document.getElementById('progressbar')
+            if(pbar) pbar.value = (curr / window.mixer.duration) * 100
+            const fortime = (t) => {
+                const m = Math.floor(t / 60)
+                const s = Math.floor(t % 60).toString().padStart(2, '0')
+                return `${m}:${s}`
+            }
+            document.getElementById('currenttime').innerText = fortime(curr)
+            document.getElementById('totaltime').innerText = fortime(window.mixer.duration)
+        }
                 scene.traverse(darken)
                 shinecomposer.render()
                 scene.traverse(undark);
@@ -704,12 +726,12 @@ document.querySelectorAll('.label').forEach(label => {
 volslide.addEventListener('input', () => {
     updateslide(volslide)
     if(!curins) return
-    window.mixer.volumes[curins] = Number(this.value)
+    window.mixer.volumes[curins] = Number(volslide.value)
     applygain(curins)
 })
 speedslide.addEventListener('input', () => {
-    updateSlider(speedslide)
-    const val = Number(this.value)
+    updateslide(speedslide)
+    const val = Number(speedslide.value)
     speedval.innerText = (val / 100).toFixed(1) + 'x'
     if(!curins) return;
     window.mixer.speed[curins] = val
@@ -730,5 +752,18 @@ if(addbtn){
         if (!curins) return
         const baseins = curins.split('_')[0];
         window.mixer.spawnorb(baseins)
+    })
+}const playerbtn = document.getElementById('playpausebtn')
+if(playerbtn){
+    playerbtn.addEventListener('click', () => {
+        const ctx = window.mixer.content
+        if(!ctx) return;
+        if(ctx.state === 'running'){
+            ctx.suspend()
+            playerbtn.innerHTML = '<span style="font-size: 16px;">▶</span> '
+        }else{
+            ctx.resume()
+            playerbtn.innerHTML = '<span style="font-size: 16px;">⏸</span> '
+        }
     })
 }
