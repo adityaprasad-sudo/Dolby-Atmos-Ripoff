@@ -261,7 +261,7 @@ let othspd = 0
     drum = './music/holdon/drums.wav'
     oth = './music/holdon/other.wav'
    }
-   if(window.backstems){
+   else if(window.backstems){
        vocal = apiurl + window.backstems.vocals
        guitat = apiurl + window.backstems.guitar
        paino = apiurl + window.backstems.piano
