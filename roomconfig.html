@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>room config ui</title>
+    <style>
+       @import url('https://fonts.googleapis.com/css2?family=Bitcount+Grid+Double:wght@100..900&display=swap');
+
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background-color: #050110; 
+            color: white;
+            font-family: sans-serif;
+        }
+        #room{
+        
+        position: fixed;
+        top: 100px;
+       left: 20px;
+        width: 30px;
+        height: 30px;
+        
+        align-items: center;
+        flex-direction: column;
+        justify-content: column;
+        gap: 6px;
+        background: #1c1230;
+        border: 1px solid rgba(255, 255, 255, 0.267);
+        border-radius: 14px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        padding: 10px;
+        transition: left 0.45s cubic-bezier(0.16, 1, 0.3,1), border-color 0.3s ease;
+        cursor: pointer;
+        z-index: 200;
+    }
+    #room:hover{
+        background: #240113;
+    }
+    .icon{
+        background-image: url('./images/room.png');
+        background-size: cover;
+        width: 100%;
+        height: 100%;
+    }
+    #room:active{
+        transform: translateY(2px);
+        border-color: #ef5da8;
+    }
+    .roomset{
+        overflow-x:hidden;
+        position: fixed;
+        display: flex;
+        top: 100px;
+       left: -385px;
+        width: 300px;
+        height: calc(100vh - 220px);
+        gap: 10px;
+        flex-direction: column;
+        justify-content: column;
+        
+        background: #1c1230;
+        border: 1px solid rgba(255, 255, 255, 0.267);
+        border-radius: 14px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        padding: 10px;
+        transition: left 0.45s cubic-bezier(0.16, 1, 0.3,1), border-color 0.3s ease;
+        z-index: 200;
+    }
+    .roomset.close{
+        left: 80px;
+    }
+    .roomfont{
+        color: #c9b8f2;
+        font-size: 20px;
+        font-family: 'Bitcount Grid Double', sans-serif;
+        font-weight: 600;
+        padding-left: 3px;
+        align-items: center;
+        text-align: left;
+        white-space: nowrap;
+
+        
+        
+    }
+    .roomselect{
+        outline:none;
+        overflow-x:hidden;
+        background-color: #050110;
+        color: #c9b8f2;
+        border: 1px solid rgba(255, 255, 255, 0.267);
+        border-radius: 5px;
+        
+        padding: 10px;
+        top : 10px;
+        transition: left 0.45s cubic-bezier(0.16, 1, 0.3,1), border-color 0.3s ease;
+        z-index: 200;
+    }
+    .roomselect:hover{
+        border-color: #ff0062;
+    }
+    .roomselect:focus {
+            
+            box-shadow: 0 0 8px rgba(255, 0, 98, 0.4);
+        }
+    .setfont{
+        padding-left: 3px;
+      color: #ff0062;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 15px 0 10px 0;
+            text-shadow: 0px 0px 8px rgba(255, 0, 98, 0.6);
+    }
+    .innertxt{
+        color: #c9b8f2;
+        font-size: 30px;
+        font-family: 'Bitcount Grid Double', sans-serif;
+        font-weight: 500;
+        align-items: center;
+        text-align: center;
+        text-shadow: 0px 0px 10px #ff0062;
+    }
+    .heighttxt{
+        font-size: 15px;
+        font-weight: 500;
+        background-color: transparent;
+        color: rgba(201, 184, 242, 0.4);
+        width:100px;
+        height: 30px;
+        font-family: 'Inter', sans-serif;
+        overflow: hidden;
+        resize:none;
+        border: none;
+        outline: none;
+        text-align: right;
+        padding-top: 5px;
+        box-sizing: border-box;
+        padding-left: 3%;
+    }
+    .heighttxt::-webkit-outer-spin-button, .heighttxt::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+    }
+    .heighttxt::placeholder{
+        color: rgba(201, 184, 242, 0.4);
+        font-weight: 400;
+    }
+    .labelgrp{
+        width: 270px;
+        
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        background: #050110;
+        border: 1px solid rgba(255, 255, 255, 0.267);
+        border-radius: 8px;
+        padding: 6px 8px 6px 14px;
+        transition: all 0.3s ease;
+    }
+    .labelgrp:focus-within{
+        border-color: #ff0040;
+        box-shadow: 0 0 8px rgba(255, 0,98, 0.3);
+    }
+    .grp{
+        color: #c9b8f2;
+        font-size: 13px;
+        font-weight: 500;
+    }
+    .roomset::-webkit-scrollbar {
+    width: 8px; 
+}
+.roomset::-webkit-scrollbar-track {
+    background: #050110; 
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.roomset::-webkit-scrollbar-thumb {
+    background: rgba(201, 184, 242, 0.3);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.roomset::-webkit-scrollbar-thumb:hover {
+    background: #ff0062;
+}
+.roomselect::-webkit-scrollbar {
+    width: 8px; 
+}
+.roomselect::-webkit-scrollbar-track {
+    background: #050110; 
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.roomselect::-webkit-scrollbar-thumb {
+    background: rgba(201, 184, 242, 0.3);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.roomselect::-webkit-scrollbar-thumb:hover {
+    background: #ff0062;
+}
+    
+    
+              
+        
+    </style>
+</head>
+<body>
+    <div id="room">
+        <div  class="icon"></div>
+        
+    </div>
+    <div class = "roomset">
+    <div class = "roomfont">Room Settings     --------</div>
+    <div class="setfont">Quick Presets</div>
+    <select id="roomsel" class="roomselect">
+        <option value="room1">Large Hallway</option>
+        <option value="room2">Cinema</option>
+        <option value="room3">Room(dolby home theater)</option>
+        
+    </select>
+<div class="setfont" >OR (I am a Pro)</div>
+    <label class ="labelgrp">
+        <span  class="grp">Depth</span>
+        <div style="display: flex; align-items: center;">
+        <input id="depth" type="number" class="heighttxt" placeholder="0.0">
+        </div>
+    </label>
+    <label class ="labelgrp">
+        <span  class="grp">Height</span>
+        <div style="display: flex; align-items: center;">
+        <input id="height" type="number" class="heighttxt" placeholder="0.0">
+        </div>
+    </label>
+    <label class ="labelgrp">
+        <span  class="grp">Width</span>
+        <div style="display: flex; align-items: center;">
+        <input id="width" type="number" class="heighttxt" placeholder="0.0">
+        </div>
+    </label>
+    <div class="setfont">Wall Materials</div>
+    <label class ="labelgrp">
+        <span  class="grp">Left Wall</span>
+        <select id="leftwall" class="roomselect">
+            <!-- all materials provided by google resonce this was provided to me by ai Thank god -->
+            <option value="1">Transparent</option>
+        <option value="2">Acoustic Ceiling Tiles</option>
+        <option value="3">Brick (Bare)</option>
+        <option value="4">Brick (Painted)</option>
+        <option value="5">Concrete Block (Coarse)</option>
+        <option value="6">Concrete Block (Painted)</option>
+        <option value="7">Curtain (Heavy)</option>
+        <option value="8">Fiber Glass Insulation</option>
+        <option value="9">Glass (Thin)</option>
+        <option value="10">Glass (Thick)</option>
+        <option value="11">Grass</option>
+        <option value="12">Linoleum On Concrete</option>
+        <option value="13">Marble</option>
+        <option value="14">Metal</option>
+        <option value="15">Parquet On Concrete</option>
+        <option value="16">Plaster (Rough)</option>
+        <option value="17">Plaster (Smooth)</option>
+        <option value="18">Plywood Panel</option>
+        <option value="19">Polished Concrete or Tile</option>
+        <option value="20">Sheetrock</option>
+        <option value="21">Water or Ice Surface</option>
+        <option value="22">Wood Ceiling</option>
+        <option value="23">Wood Panel</option>
+        <option value="24">Uniform</option>
+        </select>
+    </label>
+    <label class ="labelgrp">
+        <span  class="grp">Right Wall</span>
+        <select id="rightwall" class="roomselect">
+            <option value="1">Transparent</option>
+        <option value="2">Acoustic Ceiling Tiles</option>
+        <option value="3">Brick (Bare)</option>
+        <option value="4">Brick (Painted)</option>
+        <option value="5">Concrete Block (Coarse)</option>
+        <option value="6">Concrete Block (Painted)</option>
+        <option value="7">Curtain (Heavy)</option>
+        <option value="8">Fiber Glass Insulation</option>
+        <option value="9">Glass (Thin)</option>
+        <option value="10">Glass (Thick)</option>
+        <option value="11">Grass</option>
+        <option value="12">Linoleum On Concrete</option>
+        <option value="13">Marble</option>
+        <option value="14">Metal</option>
+        <option value="15">Parquet On Concrete</option>
+        <option value="16">Plaster (Rough)</option>
+        <option value="17">Plaster (Smooth)</option>
+        <option value="18">Plywood Panel</option>
+        <option value="19">Polished Concrete or Tile</option>
+        <option value="20">Sheetrock</option>
+        <option value="21">Water or Ice Surface</option>
+        <option value="22">Wood Ceiling</option>
+        <option value="23">Wood Panel</option>
+        <option value="24">Uniform</option>
+        </select>
+    </label>
+    <label class ="labelgrp">
+        <span  class="grp">Front Wall</span>
+        <select id="frontwall" class="roomselect">
+            <option value="1">Transparent</option>
+        <option value="2">Acoustic Ceiling Tiles</option>
+        <option value="3">Brick (Bare)</option>
+        <option value="4">Brick (Painted)</option>
+        <option value="5">Concrete Block (Coarse)</option>
+        <option value="6">Concrete Block (Painted)</option>
+        <option value="7">Curtain (Heavy)</option>
+        <option value="8">Fiber Glass Insulation</option>
+        <option value="9">Glass (Thin)</option>
+        <option value="10">Glass (Thick)</option>
+        <option value="11">Grass</option>
+        <option value="12">Linoleum On Concrete</option>
+        <option value="13">Marble</option>
+        <option value="14">Metal</option>
+        <option value="15">Parquet On Concrete</option>
+        <option value="16">Plaster (Rough)</option>
+        <option value="17">Plaster (Smooth)</option>
+        <option value="18">Plywood Panel</option>
+        <option value="19">Polished Concrete or Tile</option>
+        <option value="20">Sheetrock</option>
+        <option value="21">Water or Ice Surface</option>
+        <option value="22">Wood Ceiling</option>
+        <option value="23">Wood Panel</option>
+        <option value="24">Uniform</option>
+        </select>
+    </label>
+    <label class ="labelgrp">
+        <span  class="grp">back Wall</span>
+        <select id="backwall" class="roomselect">
+            <option value="1">Transparent</option>
+        <option value="2">Acoustic Ceiling Tiles</option>
+        <option value="3">Brick (Bare)</option>
+        <option value="4">Brick (Painted)</option>
+        <option value="5">Concrete Block (Coarse)</option>
+        <option value="6">Concrete Block (Painted)</option>
+        <option value="7">Curtain (Heavy)</option>
+        <option value="8">Fiber Glass Insulation</option>
+        <option value="9">Glass (Thin)</option>
+        <option value="10">Glass (Thick)</option>
+        <option value="11">Grass</option>
+        <option value="12">Linoleum On Concrete</option>
+        <option value="13">Marble</option>
+        <option value="14">Metal</option>
+        <option value="15">Parquet On Concrete</option>
+        <option value="16">Plaster (Rough)</option>
+        <option value="17">Plaster (Smooth)</option>
+        <option value="18">Plywood Panel</option>
+        <option value="19">Polished Concrete or Tile</option>
+        <option value="20">Sheetrock</option>
+        <option value="21">Water or Ice Surface</option>
+        <option value="22">Wood Ceiling</option>
+        <option value="23">Wood Panel</option>
+        <option value="24">Uniform</option>
+        </select>
+    </label>
+    <label class ="labelgrp">
+        <span class="grp">Ceiling</span>
+        <select id= "ceil" class="roomselect">
+            <option value="1">Transparent</option>
+        <option value="2">Acoustic Ceiling Tiles</option>
+        <option value="3">Brick (Bare)</option>
+        <option value="4">Brick (Painted)</option>
+        <option value="5">Concrete Block (Coarse)</option>
+        <option value="6">Concrete Block (Painted)</option>
+        <option value="7">Curtain (Heavy)</option>
+        <option value="8">Fiber Glass Insulation</option>
+        <option value="9">Glass (Thin)</option>
+        <option value="10">Glass (Thick)</option>
+        <option value="11">Grass</option>
+        <option value="12">Linoleum On Concrete</option>
+        <option value="13">Marble</option>
+        <option value="14">Metal</option>
+        <option value="15">Parquet On Concrete</option>
+        <option value="16">Plaster (Rough)</option>
+        <option value="17">Plaster (Smooth)</option>
+        <option value="18">Plywood Panel</option>
+        <option value="19">Polished Concrete or Tile</option>
+        <option value="20">Sheetrock</option>
+        <option value="21">Water or Ice Surface</option>
+        <option value="22">Wood Ceiling</option>
+        <option value="23">Wood Panel</option>
+        <option value="24">Uniform</option>
+        </select>
+    </label>
+    <label class ="labelgrp">
+        <span id="floor" class="grp">floor</span>
+        <select class="roomselect">
+            <option value="1">Transparent</option>
+        <option value="2">Acoustic Ceiling Tiles</option>
+        <option value="3">Brick (Bare)</option>
+        <option value="4">Brick (Painted)</option>
+        <option value="5">Concrete Block (Coarse)</option>
+        <option value="6">Concrete Block (Painted)</option>
+        <option value="7">Curtain (Heavy)</option>
+        <option value="8">Fiber Glass Insulation</option>
+        <option value="9">Glass (Thin)</option>
+        <option value="10">Glass (Thick)</option>
+        <option value="11">Grass</option>
+        <option value="12">Linoleum On Concrete</option>
+        <option value="13">Marble</option>
+        <option value="14">Metal</option>
+        <option value="15">Parquet On Concrete</option>
+        <option value="16">Plaster (Rough)</option>
+        <option value="17">Plaster (Smooth)</option>
+        <option value="18">Plywood Panel</option>
+        <option value="19">Polished Concrete or Tile</option>
+        <option value="20">Sheetrock</option>
+        <option value="21">Water or Ice Surface</option>
+        <option value="22">Wood Ceiling</option>
+        <option value="23">Wood Panel</option>
+        <option value="24">Uniform</option>
+        </select>
+    </label>
+
+</div>
+
+    <script >
+        document.getElementById('room').addEventListener('click', () => {
+            document.querySelector('.roomset').classList.toggle('close')
+        })
+    </script>
+    </body>
+</html>
