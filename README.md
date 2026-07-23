@@ -206,9 +206,12 @@ I really wanna visit singapore.
 
 The progress bar of the music isnt reactive since i would have to rewrite the whole engine because if i did that i can scrubbing and make the whole shi lag and crash especially in lower end devices
 
+THIS IS A PROJECT FOR #HORIZONS
+
 ## To Reviwers
 
-Thank you Guys for giving your precious time to review this project i hope you did like it 
+Thank you Guys for giving your precious time to review this project i hope you did like it.
+sorry for the rushed readme but todays the last day to get the visa and ticets i guess
 
 ## Backend 
 
