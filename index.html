@@ -293,7 +293,7 @@
             }
         }
         .progress {
-          background: rgba(255,255,255,0.1);
+          background: rgba(255, 0, 0, 0.13);
           justify-content: flex-start;
           border-radius: 100px;
           align-items: center;
@@ -302,18 +302,18 @@
           display: flex;
           height: 40px;
           width: 300px;
-          z-index: 9999;
+          z-index: 9999999999999999;
           margin-top: 20px;
         }
 
         .progressval {
             z-index: 99999;
-           animation: loader 3s normal forwards;
            box-shadow: 0 10px 40px -10px #fd0054;
            border-radius: 100px;
            background: #fd0054;
            height: 30px;
-           width: 0;
+           width: 0%;
+           transition: width 0.5s ease-in-out;
         }
            .wiigle{
             text-decoration: underline wavy 7px;
@@ -591,7 +591,7 @@
         left: 0;
         overflow: auto;
         width: 362px;
-        height: calc(100vh - 220px);
+        height: calc(100vh - 330px);
         padding-bottom: 10px;
         background-color: rgb(28, 18, 48);
         border: 1px solid rgba(255, 255, 255, 0.267);
@@ -789,6 +789,11 @@
     .hintspa{
         display: none;
     }
+    .loadtxt{
+        display: flex;
+        align-items: baseline;
+        margin-bottom: 20px;
+    }
     #playpausebtn{
             
             background-color: #ef5da8;
@@ -982,8 +987,8 @@
         </div>
     </div>
     <div class="load" id="chigga">
-        Loading<span>.</span><span>.</span><span>.</span>
-        <div  class=" progress">
+        <div class="loadtxt">Loading<span>.</span><span>.</span><span>.</span></div>
+    <div  class="progress">
       <div class="progressval"></div>
     </div>
     </div>

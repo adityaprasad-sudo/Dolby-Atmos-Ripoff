@@ -197,8 +197,21 @@ function mix(){
    window.mixer.speed = {}
    window.mixer.sources = {}
    window.mixer.ready = false
-   document.getElementById('chigga').style.display = 'block'
+   document.getElementById('chigga').style.display = 'flex'
    document.getElementById('cancont').style.visibility = 'hidden'
+   document.getElementById('hamburgier').style.display = 'none'
+   const totalins = stems.length + 1
+   let loadedins = 0;
+   const pval = document.querySelector('.progressval')
+   if(pval) pval.style.width = '0%'
+   function lebronjames(){
+    loadedins++
+    const percent = (loadedins / totalins) * 100
+    if(pval){
+        pval.style.width = `${percent}%`
+    }
+
+   }
    const insname = ['vocals', 'drums', 'bass', 'other', 'guitar', 'paino']
    insname.forEach(n =>{
     window.mixer.volumes[n] = 100
@@ -228,6 +241,7 @@ function mix(){
     source.loop = true
     source.connect(bas)
     source.start(0)
+    lebronjames()
    }).catch(e => console.warn(`Could not load bass bruhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh`))
    pinkypromise.push(loadbas)
    const stemorbs = []
@@ -372,6 +386,7 @@ function mix(){
         source.loop = true
         source.connect(gain)
         source.start(0)
+        lebronjames()
         window.mixer.sources[stem.name] = source;
        }).catch(e => console.warn(`Could not load ${stem.name} bruhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh`))
        pinkypromise.push(loadtsk)
@@ -380,9 +395,10 @@ function mix(){
 })
 Promise.all(pinkypromise).then(() => {
     audio.resume()
-    document.getElementById('chigga').style.display = 'none'
+    setTimeout(() => {document.getElementById('chigga').style.display = 'none'
     document.getElementById('cancont').style.visibility = 'visible'
     document.getElementById('playercontrol').style.display = 'flex'
+document.getElementById('hamburgier').style.display = 'flex'}, 600);
     // no ned now console.log("Audio perfectly synced and unfrozen!!")
 })
 function getavg(analyze){
