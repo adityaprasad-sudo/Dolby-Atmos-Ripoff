@@ -6,7 +6,8 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-
+const apiurl = "https://ambitiouspotato-spectra.hf.space"
+window.backstems = null;
 document.getElementById('github').addEventListener('click', function(){
     window.open('https://github.com/adityaprasad-sudo/Dolby-Atmos-Ripoff', '_blank')
 })
@@ -260,6 +261,23 @@ let othspd = 0
     drum = './music/holdon/drums.wav'
     oth = './music/holdon/other.wav'
    }
+   if(window.backstems){
+       vocal = apiurl + window.backstems.vocals
+       guitat = apiurl + window.backstems.guitar
+       paino = apiurl + window.backstems.piano
+       drum = apiurl + window.backstems.drums
+       oth = apiurl + window.backstems.other
+       vomove = 'behind';
+       vospd = 0.03
+       drummove = 'atom'
+       drumspd = 0.02
+       guimove = 'infinity'
+        guispd = 0.01
+       othmove = 'fountain'
+        othspd = 0.01
+       paimove = 'overhead'
+        paispd = 0.05
+   }
    const stems = [
     { name: 'vocals', color: 0xffffff, path: vocal, angle: 0, speed: vospd, move: vomove },
       { name: 'guitar', color: 0x6aff9d, path: guitat, angle: Math.PI * 2 / 5,speed: guispd, move: guimove },
@@ -306,7 +324,8 @@ let othspd = 0
    soundcheck['bass'] = analyzebas
    window.mixer.gains['bass'] = bas
    let basspath = ''
-   if(demo === 'demo1'){
+   if(window.backstems) {basspath = apiurl + window.backstems.bass}
+   else if(demo === 'demo1'){
     basspath = './music/bass.wav'
    }else if (demo === 'demo2'){
        basspath = './music/miyra/bass.wav'
@@ -691,7 +710,7 @@ dropdown.addEventListener('change', () => {
         fileinpuid.style.cursor = "pointer"
     }
 })
-upbtn.addEventListener('click', () => {
+upbtn.addEventListener('click', async () => {
 
     if(fileinpu.files.length === 0 && dropdown.value === '0'){
         stat.innerHTML = 'Select a track'
@@ -702,16 +721,40 @@ upbtn.addEventListener('click', () => {
         upbtn.style.cursor = "not-allowed"
         fileinpu.disabled = true
         fileinpuid.disabled = true
-        setTimeout(() => {
+        dropdown.disabled = true
+        dropdown.style.cursor = "not-allowed"
+        dropdown.style.opacity = "0.3"
+        if(dropdown.value !== '0'){
+            setTimeout(() => {
             stat.innerText = "stems ready"
             upbtn.style.display = "none"
             playbtn.style.display = "inline-flex"
-            fileinpu.disabled = true
-            fileinpuid.disabled = true
-            dropdown.disabled = true
-            dropdown.style.cursor = "not-allowed"
-            dropdown.style.opacity = "0.3"
         }, 2000);
+        }
+        else{
+            stat.innerHTML = 'splitting stems (takes about 2 minutes)'
+            const data = new FormData()
+            data.append('file', fileinpu.files[0]);
+            try {
+                const responce = await fetch(`${apiurl}/process-audio`, {
+                method: 'POST',
+                body: data
+            })
+            if (!responce.ok) throw new Error("something failed contact me asap");
+              window.backstems = await responce.json()
+              stat.innerText = "stems ready"
+              upbtn.style.display = "none"
+              playbtn.style.display = "inline-flex"
+
+                
+            } catch(error){
+                stat.innerHTML = 'dear reviwers if you see this then my free backend has been sleeping or crashed please use the demos please'
+                console.error(error);
+                upbtn.disabled = false
+                upbtn.style.opacity = "1"
+                upbtn.style.cursor = "pointer"
+            }
+        }
 
     }
 })
