@@ -239,6 +239,21 @@ let othspd = 0
     paino = './music/luar/piano.wav'
     drum = './music/luar/drums.wav'
     oth = './music/luar/other.wav'
+   }else if (demo === 'demo5'){
+       vomove = 'behind'
+    drummove = 'atom'
+    drumspd = 0.02
+    guimove = 'infinity'
+    guispd = 0.01
+    othmove = 'overhead'
+    othspd = 0.04
+    paimove = 'tele'
+    paispd = 0.05
+    vocal = './music/holdon/vocals.wav'
+    guitat = './music/holdon/guitar.wav'
+    paino = './music/holdon/piano.wav'
+    drum = './music/holdon/drums.wav'
+    oth = './music/holdon/other.wav'
    }
    const stems = [
     { name: 'vocals', color: 0xffffff, path: vocal, angle: 0, speed: vospd, move: vomove },
@@ -294,6 +309,8 @@ let othspd = 0
        basspath = './music/cureforme/bass.wav'
    } else if (demo === 'demo4'){
     basspath = './music/luar/bass.wav'
+   }else if(demo === 'demo5'){
+    basspath = './music/holdon/bass.wav'
    }
    const loadbas = fetch(basspath)
    .then(res => res.arrayBuffer())
@@ -462,6 +479,7 @@ Promise.all(pinkypromise).then(() => {
     setTimeout(() => {document.getElementById('chigga').style.display = 'none'
     document.getElementById('cancont').style.visibility = 'visible'
     document.getElementById('playercontrol').style.display = 'flex'
+    document.querySelector('.bor').style.display = 'flex'
 document.getElementById('hamburgier').style.display = 'flex'}, 600);
     // no ned now console.log("Audio perfectly synced and unfrozen!!")
 })
@@ -529,7 +547,7 @@ function animate() {
                             break;}
                         case 'behind':{
                           orb.position.x = 0
-                            orb.position.z = 4
+                            orb.position.z = 2.5
                          orb.position.y = 0
                             break;}
                         case 'clap':{
