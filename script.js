@@ -31,7 +31,8 @@ function mix(){
         gains: {},
         orbs: {},
         volumes: {},
-        muted: {}
+        muted: {},
+        resaudio:resaudio
     }
     let roommat = {
         left: 'wood-panel',
@@ -47,9 +48,13 @@ function mix(){
     scene.fog = new THREE.FogExp2(0x050110, 0.02)
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
     camera.position.set(0,0,10)
-    const renderguy = new THREE.WebGLRenderer({antialias: true, alpha: true})
+    const mobile = window.innerWidth < 768;
+    const renderguy = new THREE.WebGLRenderer({
+        antialias: !mobile, 
+        alpha: true
+    })
     renderguy.setSize(window.innerWidth, window.innerHeight)
-    renderguy.setPixelRatio(Math.min(window.devicePixelRatio,2))
+    renderguy.setPixelRatio(mobile ? 1 : Math.min(window.devicePixelRatio, 2))
     renderguy.toneMapping = THREE.ACESFilmicToneMapping
     renderguy.toneMappingExposure = 1.1
     renderguy.outputColorSpace = THREE.SRGBColorSpace
@@ -480,6 +485,7 @@ Promise.all(pinkypromise).then(() => {
     document.getElementById('cancont').style.visibility = 'visible'
     document.getElementById('playercontrol').style.display = 'flex'
     document.querySelector('.bor').style.display = 'flex'
+    document.getElementById('room').style.display = 'flex'
 document.getElementById('hamburgier').style.display = 'flex'}, 600);
     // no ned now console.log("Audio perfectly synced and unfrozen!!")
 })
@@ -865,3 +871,64 @@ if(playerbtn){
         }
     })
 }
+
+document.getElementById('room').addEventListener('click', () => {
+    document.querySelector('.roomset').classList.toggle('close')
+})
+
+const mat = {
+    "1": "transparent", "2": "acoustic-ceiling-tiles", "3": "brick-bare", "4": "brick-painted",
+    "5": "concrete-block-coarse", "6": "concrete-block-painted", "7": "curtain-heavy", "8": "fiber-glass-insulation",
+    "9": "glass-thin", "10": "glass-thick", "11": "grass", "12": "linoleum-on-concrete",
+    "13": "marble", "14": "metal", "15": "parquet-on-concrete", "16": "plaster-rough",
+    "17": "plaster-smooth", "18": "plywood-panel", "19": "polished-concrete-or-tile", "20": "plaster-smooth",
+    "21": "water-or-ice-surface", "22": "wood-ceiling", "23": "wood-panel", "24": "uniform"
+}
+function uproomset(){
+    if(!window.mixer || !window.mixer.resaudio) return
+    const w = parseFloat(document.getElementById('width').value)
+    const h = parseFloat(document.getElementById('height').value)
+    const d = parseFloat(document.getElementById('depth').value)
+
+    const left = mat[document.getElementById('leftwall').value]
+    const right = mat[document.getElementById('rightwall').value]
+    const front = mat[document.getElementById('frontwall').value]
+    const back = mat[document.getElementById('backwall').value]
+    const down = mat[document.getElementById('floor').value]
+    const up = mat[document.getElementById('ceil').value]
+    window.mixer.resaudio.setRoomProperties({width: w, height: h, depth: d}, {left, right, front, back, down, up})
+    }
+    ['width', 'height', 'depth', 'leftwall', 'rightwall', 'frontwall', 'backwall', 'floor', 'ceil'].forEach(id => 
+    {
+        const el = document.getElementById(id)
+        if(el) el.addEventListener('input', uproomset)
+})
+document.getElementById('roomsel').addEventListener('change', (e) => {
+    const val = e.target.value
+    
+        // ai helphed here since i litteraly have no idea how sound behave into different materials
+    if (val === 'room1'){
+    document.getElementById('width').value = 10;
+    document.getElementById('height').value = 10;
+    document.getElementById('depth').value = 100;
+    ['leftwall', 'rightwall', 'frontwall', 'backwall'].forEach(id => document.getElementById(id).value = "19")
+    document.getElementById('ceil').value = "2";
+    document.getElementById('floor').value = "19";
+} else if (val === 'room2'){
+    document.getElementById('width').value = 50;
+    document.getElementById('height').value = 20;
+    document.getElementById('depth').value = 50;
+    ['leftwall', 'rightwall', 'backwall'].forEach(id => document.getElementById(id).value = "7");
+    document.getElementById('frontwall').value = "1";
+    document.getElementById('ceil').value = "2";
+    document.getElementById('floor').value = "7"
+} else if(val === 'room3') { 
+    document.getElementById('width').value = 15;
+    document.getElementById('height').value = 10;
+    document.getElementById('depth').value = 20;
+    ['leftwall', 'rightwall', 'frontwall', 'backwall'].forEach(id => document.getElementById(id).value = "23");
+    document.getElementById('ceil').value = "2";
+    document.getElementById('floor').value = "15";
+}
+    uproomset()
+})
