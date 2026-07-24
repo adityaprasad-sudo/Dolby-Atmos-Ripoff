@@ -949,7 +949,7 @@ function uproomset(){
 document.getElementById('roomsel').addEventListener('change', (e) => {
     const val = e.target.value
     
-        // ai helphed here since i litteraly have no idea how sound behave into different materials
+    // ai helphed here since i litteraly have no idea how sound behave into different materials
     if (val === 'room1'){
     document.getElementById('width').value = 10;
     document.getElementById('height').value = 10;
